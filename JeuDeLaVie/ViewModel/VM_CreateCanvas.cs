@@ -1,4 +1,5 @@
-﻿using RelayCommandLibrary;
+﻿using JeuDeLaVie.View;
+using RelayCommandLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,6 @@ namespace JeuDeLaVie.ViewModel
 {
     internal class VM_CreateCanvas : VM_Base
     {
-        private int _inputWidth;
-        private int _inputHeight;
         private int _width;
         private int _height;
         private string _errWidth;
@@ -94,15 +93,19 @@ namespace JeuDeLaVie.ViewModel
 
         public RelayCommand CreateCanvas { get; private set; }
 
-        public VM_CreateCanvas()
+        public VM_CreateCanvas(Window window)
         {
-            CreateCanvas = new(exec => { }, canExec => (_width is <= 30 and >= 10) && (_height is <= 30 and >= 10));
+            CreateCanvas = new(exec =>
+            {
+                var game = new GameOfLife();
                 var tileSize = ((game.Width * 0.6) - 15) / _width;
                 if (tileSize < 15)
                     tileSize = 15;
                 game.Height = tileSize * _height + 30;
                 game.Width = game.Height / 0.6;
                 game.DataContext = new VM_Game(_width, _height, tileSize);
+                game.Show();
+                window.Close();
             });
             BorderBrushHeight = Brushes.Black;
             BorderBrushWidth = Brushes.Black;

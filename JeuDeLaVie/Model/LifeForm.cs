@@ -9,7 +9,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls;
-using JeuDeLaVie.Helper.Event;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 

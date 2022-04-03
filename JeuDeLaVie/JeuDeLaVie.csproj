@@ -12,14 +12,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="RelayCommandLibrary">
-      <HintPath>..\..\..\..\RelayCommandLibrary.dll</HintPath>
-      <CopyLocal>True</CopyLocal>
-    </Reference>
+    <Folder Include="Helper\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helper\" />
+    <Reference Include="RelayCommandLibrary">
+      <HintPath>..\..\..\..\Desktop\CÉGEP\2021-2022\Hiver 2022\RelayCommandLibrary.dll</HintPath>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
   </ItemGroup>
 
 </Project>
