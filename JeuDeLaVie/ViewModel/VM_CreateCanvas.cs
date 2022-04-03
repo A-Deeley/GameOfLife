@@ -22,84 +22,42 @@ namespace JeuDeLaVie.ViewModel
 
         public string Width
         {
-            get => _inputWidth.ToString();
+            get => _width.ToString();
             set
             {
-                if (!string.IsNullOrEmpty(value) && int.TryParse(value, out int valueInt))
+                if (int.TryParse(value, out int valueInt))
                 {
-                    switch (valueInt)
-                    {
-                        case > 30:
-                            {
-                                ErrWidth = $"Trop grand (> 30)";
-                                BorderBrushWidth = Brushes.Red;
-                                break;
-                            }
-                        case < 10:
-                            {
-                                ErrWidth = $"Trop petit (< 10)";
-                                BorderBrushWidth = Brushes.Red;
-                                break;
-                            }
-                        default:
-                            {
-                                BorderBrushWidth = Brushes.Black;
-                                ErrWidth = string.Empty;
-                                _width = valueInt;
-                                break;
-                            }
-                    }
-                    _inputWidth = valueInt;
+                    ErrWidth = string.Empty;
+                    BorderBrushWidth = Brushes.Black;
+                    _width = valueInt;
                     OnPropertyChanged();
                 }
                 else
                 {
-                    ErrWidth = $"Valeur pas un entier.";
+                    ErrWidth = "Pas un entier.";
                     BorderBrushWidth = Brushes.Red;
                 }
             }
         }
-
         public string Height
         {
-            get => _inputHeight.ToString();
+            get => _height.ToString();
             set
             {
-                if (!string.IsNullOrEmpty(value) && int.TryParse(value, out int valueInt))
+                if (int.TryParse(value, out int valueInt))
                 {
-                    switch (valueInt)
-                    {
-                        case > 30:
-                            {
-                                ErrHeight = $"Trop grand (> 30)";
-                                BorderBrushHeight = Brushes.Red;
-                                break;
-                            }
-                        case < 10:
-                            {
-                                ErrHeight = $"Trop petit (< 10)";
-                                BorderBrushHeight = Brushes.Red;
-                                break;
-                            }
-                        default:
-                            {
-                                BorderBrushHeight = Brushes.Black;
-                                ErrHeight = string.Empty;
-                                _height = valueInt;
-                                break;
-                            }
-                    }
-                    _inputHeight = valueInt;
+                    ErrHeight = string.Empty;
+                    BorderBrushHeight = Brushes.Black;
+                    _height = valueInt;
                     OnPropertyChanged();
                 }
                 else
                 {
-                    ErrHeight = $"Valeur pas un entier.";
+                    ErrHeight = "Pas un entier.";
                     BorderBrushHeight = Brushes.Red;
                 }
             }
         }
-
         public string ErrWidth
         {
             get => _errWidth;
@@ -126,12 +84,12 @@ namespace JeuDeLaVie.ViewModel
 
         public Visibility ErrorWidthVisible
         {
-            get => string.IsNullOrEmpty(ErrWidth) ? Visibility.Hidden : Visibility.Visible;
+            get => string.IsNullOrEmpty(ErrWidth) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public Visibility ErrorHeightVisible
         {
-            get => string.IsNullOrEmpty(ErrHeight) ? Visibility.Hidden : Visibility.Visible;
+            get => string.IsNullOrEmpty(ErrHeight) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public RelayCommand CreateCanvas { get; private set; }
@@ -139,6 +97,13 @@ namespace JeuDeLaVie.ViewModel
         public VM_CreateCanvas()
         {
             CreateCanvas = new(exec => { }, canExec => (_width is <= 30 and >= 10) && (_height is <= 30 and >= 10));
+                var tileSize = ((game.Width * 0.6) - 15) / _width;
+                if (tileSize < 15)
+                    tileSize = 15;
+                game.Height = tileSize * _height + 30;
+                game.Width = game.Height / 0.6;
+                game.DataContext = new VM_Game(_width, _height, tileSize);
+            });
             BorderBrushHeight = Brushes.Black;
             BorderBrushWidth = Brushes.Black;
         }

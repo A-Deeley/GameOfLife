@@ -4,19 +4,40 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JeuDeLaVie.View"
+        xmlns:vm="clr-namespace:JeuDeLaVie.ViewModel"
+        xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
+        d:DataContext="{d:DesignInstance vm:VM_Game}"
         mc:Ignorable="d"
-        Title="GameOfLife" Height="480" Width="800" ResizeMode="NoResize">
+        Title="GameOfLife" Height="480" Width="800" SizeToContent="WidthAndHeight">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60*"/>
             <ColumnDefinition Width="40*"/>
         </Grid.ColumnDefinitions>
-        <Border Margin="14" BorderThickness="1" BorderBrush="Black">
-            <ItemsControl ItemsSource="{Binding Forms}">
+        <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="14" BorderThickness="1" BorderBrush="Black" Height="{Binding CanvasHeightPx}" Width="{Binding CanvasWidthPx}">
+            <ItemsControl ItemsSource="{Binding Formes}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="Transparent"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding Coord.PosX}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Coord.PosY}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Canvas ScrollViewer.VerticalScrollBarVisibility="Disabled" SnapsToDevicePixels="True">
-                        </Canvas>
+                        <Border BorderBrush="Gray" BorderThickness="1">
+                            <Rectangle Width="{Binding Coord.TileWidth}" Height="{Binding Coord.TileWidth}" Fill="{Binding LifeFormColour}" StrokeThickness="1">
+                                <behaviours:Interaction.Triggers>
+                                    <behaviours:EventTrigger EventName="MouseDown">
+                                        <behaviours:InvokeCommandAction Command="{Binding LifeFormClickedEvent}" PassEventArgsToCommand="True"/>
+                                    </behaviours:EventTrigger>
+                                </behaviours:Interaction.Triggers>
+                            </Rectangle>
+                        </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -42,6 +63,7 @@
             </StackPanel>
             <Button Background="Green" Command="{Binding}" Margin="15, 5">Démarrer</Button>
             <Button Command="{Binding}" Margin="15, 5">Pause</Button>
+            <Label Content="{Binding CurrentIteration}"/>
         </StackPanel>
     </Grid>
 </Window>

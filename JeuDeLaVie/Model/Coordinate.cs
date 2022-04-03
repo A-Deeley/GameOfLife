@@ -36,5 +36,10 @@ namespace JeuDeLaVie.Model
             if (width > 15)
                 TileWidth = width;
         }
+
+        public override string ToString()
+        {
+            return $"({X}, {Y})";
+        }
     }
 }
