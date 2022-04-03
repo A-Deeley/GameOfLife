@@ -4,12 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JeuDeLaVie.View"
+        xmlns:vm="clr-namespace:JeuDeLaVie.ViewModel"
+        d:DataContext="{d:DesignInstance vm:VM_CreateCanvas}"
         mc:Ignorable="d"
         Title="CanvasPicker" Height="200" Width="400">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="20*"/>
+            <ColumnDefinition Width="80*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -22,9 +24,17 @@
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Text="{Binding WidthX}" Height="30" Width="60" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <StackPanel VerticalAlignment="Center">
+                <!--Width-->
+                <TextBox BorderBrush="{Binding BorderBrushWidth}" Text="{Binding Width}" Height="30" Width="60" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <Label Content="{Binding ErrWidth}" HorizontalAlignment="Right" Foreground="Red"/>
+            </StackPanel>
             <Label Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">x</Label>
-            <TextBox Grid.Column="2" Text="{Binding WidthY}" Height="30" Width="60" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                <!--Height-->
+                <TextBox BorderBrush="{Binding BorderBrushHeight}" Text="{Binding Height}" Height="30" Width="60" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Label Content="{Binding ErrHeight}" HorizontalAlignment="Left" Foreground="Red"/>
+            </StackPanel>
         </Grid>
         <Button Grid.Row="1" Grid.ColumnSpan="2" Margin="5" Height="35" Width="100" Command="{Binding CreateCanvas}">
             Create Canvas

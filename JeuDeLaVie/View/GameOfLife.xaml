@@ -38,7 +38,7 @@
             <StackPanel Orientation="Horizontal">
                 <Label>Nombre d'itérations:</Label>
                 <TextBox Margin="5" Text="{Binding t}" Width="75" IsEnabled="{Binding}"/>
-                <CheckBox VerticalAlignment="Center" IsChecked="{Binding t, Mode=OneWayToSource}">Infini?</CheckBox>
+                <CheckBox VerticalAlignment="Center" IsChecked="{Binding t}">Infini?</CheckBox>
             </StackPanel>
             <Button Background="Green" Command="{Binding}" Margin="15, 5">Démarrer</Button>
             <Button Command="{Binding}" Margin="15, 5">Pause</Button>
