@@ -3,11 +3,15 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
-<<<<<<< HEAD
     <Nullable>enable</Nullable>
-=======
->>>>>>> 95b1444e24390904e8131576b27fef42412d364f
     <UseWPF>true</UseWPF>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="RelayCommandLibrary">
+      <HintPath>..\..\..\..\RelayCommandLibrary.dll</HintPath>
+      <CopyLocal>True</CopyLocal>
+    </Reference>
+  </ItemGroup>
 
 </Project>
