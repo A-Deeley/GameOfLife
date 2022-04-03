@@ -1,0 +1,33 @@
+﻿<Window x:Class="JeuDeLaVie.View.CanvasPicker"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JeuDeLaVie.View"
+        mc:Ignorable="d"
+        Title="CanvasPicker" Height="200" Width="400">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label VerticalAlignment="Center" HorizontalAlignment="Right">Canvas size:</Label>
+        <Grid Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Text="{Binding WidthX}" Height="30" Width="60" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <Label Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">x</Label>
+            <TextBox Grid.Column="2" Text="{Binding WidthY}" Height="30" Width="60" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        </Grid>
+        <Button Grid.Row="1" Grid.ColumnSpan="2" Margin="5" Height="35" Width="100" Command="{Binding CreateCanvas}">
+            Create Canvas
+        </Button>
+    </Grid>
+</Window>
