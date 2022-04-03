@@ -23,7 +23,9 @@ namespace JeuDeLaVie.View
         public CanvasPicker()
         {
             InitializeComponent();
-            DataContext = new VM_CreateCanvas();
+            DataContext = new VM_CreateCanvas(this);
+            Closed += (s, e) => DataContext = null;   
         }
+
     }
 }
