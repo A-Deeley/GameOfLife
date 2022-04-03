@@ -97,7 +97,7 @@ namespace JeuDeLaVie.ViewModel
         {
             CreateCanvas = new(exec =>
             {
-                var game = new GameOfLife();
+                Window game = new GameOfLife();
                 var tileSize = ((game.Width * 0.6) - 15) / _width;
                 if (tileSize < 15)
                     tileSize = 15;
