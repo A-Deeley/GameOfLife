@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace JeuDeLaVie.ViewModel
 {
+    /// <summary>
+    /// Base viewmodel to simplify implementation of INotifyPropertyChanged.
+    /// </summary>
     internal abstract class VM_Base : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;

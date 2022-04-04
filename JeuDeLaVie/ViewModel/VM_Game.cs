@@ -12,20 +12,44 @@ using System.Windows.Controls.Primitives;
 
 namespace JeuDeLaVie.ViewModel
 {
+    /// <summary>
+    /// ViewModel hosting the bindings for the views as well as the game logic.
+    /// </summary>
     internal class VM_Game : VM_Base
     {
+        /// <summary>
+        ///  The ObservableCollection stores the view-representation of the game state.
+        /// </summary>
         private ObservableCollection<LifeForm> _formes;
+        /// <summary>
+        /// The 2-dimensional bool array stores the logical state of the game. Iterations are performed on this array and then copied to the display list.
+        /// </summary>
         internal bool[,] _logicalState;
+        /// <summary>
+        /// Represents the state of the game, and while true prevents the user from interacting with the UI (ignores MouseDown events).
+        /// </summary>
         private bool _isPlaying;
         private bool _isPaused;
         private int _canvasWidthTiles;
         private int _canvasHeightTiles;
         private int _canvasWidthPx;
         private int _canvasHeightPx;
+        /// <summary>
+        /// Width of the a single tile in px squared.
+        /// </summary>
         private double _canvasTileSize;
+        /// <summary>
+        /// View-binding to enable infinite iterations.
+        /// </summary>
         private bool? _infinite;
+        /// <summary>
+        /// Amount of iterations (generations) to run the program for.
+        /// </summary>
         private int _iterations;
         private int _currentIteration;
+        /// <summary>
+        /// Iteration speed in ms.
+        /// </summary>
         private double _iterationSpeed;
 
         public ObservableCollection<LifeForm> Formes
@@ -71,13 +95,16 @@ namespace JeuDeLaVie.ViewModel
         public double IterationSpeed
         {
             get => _iterationSpeed;
-            set { if (value != null) { _iterationSpeed = value; OnPropertyChanged(); } }
+            set { _iterationSpeed = value; OnPropertyChanged(); }
         }
         public bool IsPlaying
         {
             get => _isPlaying;
             set { _isPlaying = value; OnPropertyChanged(); }
         }
+        /// <summary>
+        /// Blocks MouseDown events from occuring if the game is currently iterating.
+        /// </summary>
         public bool CanClickForm
         {
             get => !IsPlaying;
@@ -118,15 +145,22 @@ namespace JeuDeLaVie.ViewModel
 
             StartGame = new(exec => Run());
         }
-
+        /// <summary>
+        /// Main game loop.
+        /// </summary>
         private async void Run()
         {
             IsPlaying = true;
+            // Make sure the property value disabling MouseDown is correctly updated to the view.
             OnPropertyChanged(nameof(CanClickForm));
+            // Copy the initial view state from user input into the logical state.
             CopyFormsToArray2Dimensional(Formes);
+
             while (CurrentIteration < _iterations)
             {
-                await Task.Run(() => Thread.Sleep((int)(1000 * IterationSpeed)));
+                //TODO: Implement pause feature.
+
+                await Task.Run(() => Thread.Sleep((int)(1000 * IterationSpeed))); //TODO: Change iteration speed to be a linear ms-based slider instead of a multiplier.
                 // Compute next generation
                 List<int> changedForms = Iterate();
                 // Apply it to the view
@@ -135,7 +169,10 @@ namespace JeuDeLaVie.ViewModel
                 CurrentIteration++;
             }
         }
-
+        /// <summary>
+        /// Copies the given list object into the 2-dimensional logical state array.
+        /// </summary>
+        /// <param name="list">List to copy.</param>
         private void CopyFormsToArray2Dimensional(ObservableCollection<LifeForm> list)
         {
             for (int row = 0; row < _logicalState.GetLength(1); row++)
@@ -148,7 +185,10 @@ namespace JeuDeLaVie.ViewModel
                 }
             }
         }
-
+        /// <summary>
+        /// Computes 1 generation of the elements in the logical state array, storing the changed indexes in a list.
+        /// </summary>
+        /// <returns>List of indexes of changed states.</returns>
         private List<int> Iterate() 
         {
             List<int> changed = new();
@@ -163,18 +203,27 @@ namespace JeuDeLaVie.ViewModel
 
             return changed;
         }
-
+        /// <summary>
+        /// Applies the changes to the indexes given to the display list (view), then updates the logical state.
+        /// </summary>
+        /// <param name="changes"></param>
         private void ApplyChanges(List<int> changes)
         {
+            // Apply changes.
             foreach (int index in changes)
             {
                 Formes[index].ToggleState();
             }
-
+            // Update logical state with changes.
             CopyFormsToArray2Dimensional(Formes);
         }
 
-
+        /// <summary>
+        /// Computes wether a LifeForm on a specified (x, y) is alive or dead in the next generation.
+        /// </summary>
+        /// <param name="row">The row of the LifeForm.</param>
+        /// <param name="col">The column of the LifeForm.</param>
+        /// <returns>True if the specified LifeForm is alive, false if it's dead.</returns>
         private bool FormNextGenerationIsAlive(int row, int col)
         {
             int sumAlive = 0;

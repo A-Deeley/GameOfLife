@@ -10,6 +10,9 @@ using System.Windows.Media;
 
 namespace JeuDeLaVie.ViewModel
 {
+    /// <summary>
+    /// Viewmodel serving the canvas creation view. Handles verification and initialisation of the game view & logic.
+    /// </summary>
     internal class VM_CreateCanvas : VM_Base
     {
         private int _width;
@@ -19,6 +22,9 @@ namespace JeuDeLaVie.ViewModel
         private Brush _borderBrushWidth;
         private Brush _borderBrushHeight;
 
+        /// <summary>
+        /// Input for the width in tiles of the game board.
+        /// </summary>
         public string Width
         {
             get => _width.ToString();
@@ -38,6 +44,9 @@ namespace JeuDeLaVie.ViewModel
                 }
             }
         }
+        /// <summary>
+        /// Input for the height in tiles of the game board.
+        /// </summary>
         public string Height
         {
             get => _height.ToString();
@@ -57,42 +66,44 @@ namespace JeuDeLaVie.ViewModel
                 }
             }
         }
+        /// <summary>
+        /// Error message to display depending on validation parameters.
+        /// </summary>
         public string ErrWidth
         {
             get => _errWidth;
             set { _errWidth = value; OnPropertyChanged(); }
         }
-
+        /// <summary>
+        /// Error message to display depending on validation parameters.
+        /// </summary>
         public string ErrHeight
         {
             get => _errHeight;
             set { _errHeight = value; OnPropertyChanged(); }
         }
-
+        /// <summary>
+        /// Colour brush for the width input textbox (red for error, black normally).
+        /// </summary>
         public Brush BorderBrushWidth
         {
             get => _borderBrushWidth;
             set { _borderBrushWidth = value; OnPropertyChanged(); }
         }
-
+        /// <summary>
+        /// Colour brush for the height input textbox (red for error, black normally).
+        /// </summary>
         public Brush BorderBrushHeight
         {
             get => _borderBrushHeight;
             set { _borderBrushHeight = value; OnPropertyChanged(); }
         }
 
-        public Visibility ErrorWidthVisible
-        {
-            get => string.IsNullOrEmpty(ErrWidth) ? Visibility.Collapsed : Visibility.Visible;
-        }
-
-        public Visibility ErrorHeightVisible
-        {
-            get => string.IsNullOrEmpty(ErrHeight) ? Visibility.Collapsed : Visibility.Visible;
-        }
-
         public RelayCommand CreateCanvas { get; private set; }
-
+        /// <summary>
+        /// Creates an instance of the viewmodel for the canvas creation.
+        /// </summary>
+        /// <param name="window"></param>
         public VM_CreateCanvas(Window window)
         {
             CreateCanvas = new(exec =>
