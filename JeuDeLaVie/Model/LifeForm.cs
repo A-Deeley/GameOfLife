@@ -30,6 +30,7 @@ namespace JeuDeLaVie.Model
             set
             {
                 _isAlive = value;
+                OnPropertyChanged();
                 LifeFormColour = (value) ? Brushes.Black : Brushes.White;
             }
         }
@@ -71,5 +72,9 @@ namespace JeuDeLaVie.Model
             Coord.SetTileWidth(tileWidth);
         }
 
+        public void ToggleState()
+        {
+            IsAlive = !IsAlive;
+        }
     }
 }

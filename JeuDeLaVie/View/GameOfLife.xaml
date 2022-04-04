@@ -15,7 +15,7 @@
             <ColumnDefinition Width="40*"/>
         </Grid.ColumnDefinitions>
         <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="14" BorderThickness="1" BorderBrush="Black" Height="{Binding CanvasHeightPx}" Width="{Binding CanvasWidthPx}">
-            <ItemsControl ItemsSource="{Binding Formes}">
+            <ItemsControl ItemsSource="{Binding Formes}" IsHitTestVisible="{Binding CanClickForm}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas Background="Transparent"/>
@@ -58,12 +58,13 @@
             </GroupBox>
             <StackPanel Orientation="Horizontal">
                 <Label>Nombre d'itérations:</Label>
-                <TextBox Margin="5" Text="{Binding t}" Width="75" IsEnabled="{Binding}"/>
+                <TextBox Margin="5" Text="{Binding NoIterations}" Width="75" IsEnabled="{Binding}"/>
                 <CheckBox VerticalAlignment="Center" IsChecked="{Binding t}">Infini?</CheckBox>
             </StackPanel>
-            <Button Background="Green" Command="{Binding}" Margin="15, 5">Démarrer</Button>
+            <Button Background="Green" Command="{Binding StartGame}" Margin="15, 5">Démarrer</Button>
             <Button Command="{Binding}" Margin="15, 5">Pause</Button>
             <Label Content="{Binding CurrentIteration}"/>
+            <Slider Minimum="0.5" Maximum="1.5" Value="{Binding IterationSpeed}" Margin="10, 5" TickPlacement="BottomRight" IsSnapToTickEnabled="True" TickFrequency="0.5" Foreground="Black"/>
         </StackPanel>
     </Grid>
 </Window>

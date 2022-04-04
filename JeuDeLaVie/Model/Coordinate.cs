@@ -9,10 +9,10 @@ namespace JeuDeLaVie.Model
     internal class Coordinate
     {
 
-        private int X { get; set; }
-        private int Y { get; set; }
-        public int PosX { get => X * TileWidth; }
-        public int PosY { get => Y * TileWidth; }
+        public int Col { get; private set; }
+        public int Row { get; private set; }
+        public int PosX { get => Col * TileWidth; }
+        public int PosY { get => Row * TileWidth; }
         public int TileWidth { get; private set; }
 
         /// <summary>
@@ -22,8 +22,8 @@ namespace JeuDeLaVie.Model
         /// <param name="y">y position</param>
         public Coordinate(int x, int y)
         {
-            X = x;
-            Y = y;
+            Col = x;
+            Row = y;
             TileWidth = 15;
         }
 
@@ -39,7 +39,7 @@ namespace JeuDeLaVie.Model
 
         public override string ToString()
         {
-            return $"({X}, {Y})";
+            return $"({Col}, {Row})";
         }
     }
 }
