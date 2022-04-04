@@ -106,9 +106,6 @@ namespace JeuDeLaVie.ViewModel
                 var dt = new VM_Game(_width, _height, tileSize);
                 game.DataContext = dt;
                 game.Show();
-                Window test = new Test();
-                test.DataContext = dt;
-                test.Show();
                 window.Close();
             });
             BorderBrushHeight = Brushes.Black;

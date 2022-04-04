@@ -104,7 +104,7 @@ namespace JeuDeLaVie.ViewModel
                 {
                     for (int col = 0; col < _logicalState.GetLength(0); col++)
                     {
-                        Formes.Add(new(row, col, (int)_canvasTileSize));
+                        Formes.Add(new(col, row, (int)_canvasTileSize));
                     }
                 }
             else
@@ -112,7 +112,7 @@ namespace JeuDeLaVie.ViewModel
                 {
                     for (int col = 0; col < _logicalState.GetLength(0); col++)
                     {
-                        Formes.Add(new(row, col));
+                        Formes.Add(new(col, row));
                     }
                 }
 
@@ -128,9 +128,9 @@ namespace JeuDeLaVie.ViewModel
             {
                 await Task.Run(() => Thread.Sleep((int)(1000 * IterationSpeed)));
                 // Compute next generation
-                List<int> changedForms = await Iterate();
+                List<int> changedForms = Iterate();
                 // Apply it to the view
-                await Task.Run(() => { ApplyChanges(changedForms); });
+                ApplyChanges(changedForms);
                 // Increment iteration
                 CurrentIteration++;
             }
@@ -144,12 +144,12 @@ namespace JeuDeLaVie.ViewModel
                 {
                     int index = row * _logicalState.GetLength(0) + col;
                     bool isAlive = list.ElementAt(index).IsAlive;
-                    _logicalState[row, col] = isAlive;
+                    _logicalState[col, row] = isAlive;
                 }
             }
         }
 
-        private async Task<List<int>> Iterate() 
+        private List<int> Iterate() 
         {
             List<int> changed = new();
             for (int row = 0; row < _logicalState.GetLength(1); row++)
@@ -157,7 +157,7 @@ namespace JeuDeLaVie.ViewModel
                 for (int col = 0; col < _logicalState.GetLength(0); col++)
                 {
                     // If the state is different, add it to a list. Since the list is 1-Dimensional, multiply the row buy the row length and add the column value.
-                    if (_logicalState[row, col] != FormNextGenerationIsAlive(row, col)) changed.Add(row * _logicalState.GetLength(0) + col);
+                    if (_logicalState[col, row] != FormNextGenerationIsAlive(row, col)) changed.Add(row * _logicalState.GetLength(0) + col);
                 }
             }
 
@@ -202,10 +202,6 @@ namespace JeuDeLaVie.ViewModel
                     }
                 }
 
-            // If we found 3 alive neighbours, and the cell is dead, it becomes aive.
-            if (!isCurrentFormAlive && sumAlive >= 3) return true;
-
-
             // Check same row
             for (int fCol = leftBound; fCol <= rightBound; fCol++)
             {
@@ -217,8 +213,6 @@ namespace JeuDeLaVie.ViewModel
                     // If the form is alive and has more than 3 neighbours, it dies.
                     if (isCurrentFormAlive && sumAlive > 3) return false;
 
-                    // If the form is dead and has at least 3 neighbours, it becomes alive.
-                    if (!isCurrentFormAlive && sumAlive >= 3) return true;
                 }
             }
 
@@ -232,10 +226,12 @@ namespace JeuDeLaVie.ViewModel
                     }
                 }
 
-            // If we found 3 alive neighbours, and the cell is dead, it becomes aive.
-            if (!isCurrentFormAlive && sumAlive >= 3) return true;
+            // If we found 3 alive neighbours, and the cell is dead, it becomes alive.
+            if (!isCurrentFormAlive && sumAlive == 3) return true;
             // If the form is alive and has more than 3 neighbours, it dies.
-            if (isCurrentFormAlive && sumAlive > 3) return false;
+            if (isCurrentFormAlive && sumAlive > 3) return false; 
+            // If the form is alive and has 2 or 3 neighbours, it stays alives
+            if (isCurrentFormAlive && (sumAlive is >= 2 and <= 3)) return true;
 
             return false;
         }
