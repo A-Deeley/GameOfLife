@@ -14,6 +14,9 @@ using System.Runtime.CompilerServices;
 
 namespace JeuDeLaVie.Model
 {
+    /// <summary>
+    /// Model representing one square in the game board.
+    /// </summary>
     internal class LifeForm : INotifyPropertyChanged
     {
         #region Events
@@ -24,6 +27,9 @@ namespace JeuDeLaVie.Model
         private bool _isAlive;
         private Brush _lifeFormColour;
         #region Bindings
+        /// <summary>
+        /// Represents the state of the object (alive or dead).
+        /// </summary>
         public bool IsAlive
         {
             get => _isAlive;
@@ -31,9 +37,13 @@ namespace JeuDeLaVie.Model
             {
                 _isAlive = value;
                 OnPropertyChanged();
+                // Set the colour of the square depending on the state.
                 LifeFormColour = (value) ? Brushes.Black : Brushes.White;
             }
         }
+        /// <summary>
+        /// Depending on the state, the square is either black (alive) or white (dead).
+        /// </summary>
         public Brush LifeFormColour {
             get => _lifeFormColour;
             set
@@ -42,9 +52,14 @@ namespace JeuDeLaVie.Model
                 OnPropertyChanged();
             }
         }
+        /// <summary>
+        /// Command binding to the conversion from an event to a command in the xaml.
+        /// </summary>
         public RelayCommand LifeFormClickedEvent { get; private set; }
         #endregion
-
+        /// <summary>
+        /// Represents the position (x, y) of the form in the game grid.
+        /// </summary>
         public Coordinate Coord { get; private set; }
 
         /// <summary>

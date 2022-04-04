@@ -6,13 +6,31 @@ using System.Threading.Tasks;
 
 namespace JeuDeLaVie.Model
 {
+    /// <summary>
+    /// Represents a position on the game board. Stores values as discrete values, but provides dynamic positioning attributes for variable display sizes.
+    /// </summary>
     internal class Coordinate
     {
 
+        /// <summary>
+        /// Discrete column number.
+        /// </summary>
         public int Col { get; private set; }
+        /// <summary>
+        /// Discrete row number.
+        /// </summary>
         public int Row { get; private set; }
+        /// <summary>
+        /// Dynamic position (row) of the coordinate based on size of the bound object (tile).
+        /// </summary>
         public int PosX { get => Col * TileWidth; }
+        /// <summary>
+        /// Dynamic position (column) of the coordinate based on the size of the bound object (tile).
+        /// </summary>
         public int PosY { get => Row * TileWidth; }
+        /// <summary>
+        /// Variable width of the bound object (tile). Default: 15. Minimum value: 15.
+        /// </summary>
         public int TileWidth { get; private set; }
 
         /// <summary>
@@ -30,10 +48,10 @@ namespace JeuDeLaVie.Model
         /// <summary>
         /// Set the tile width modifier.
         /// </summary>
-        /// <param name="width">New value for the tile width. Must be greater than 15 (pixels).</param>
+        /// <param name="width">New value for the tile width. Must be at least 15 (pixels).</param>
         public void SetTileWidth(int width)
         {
-            if (width > 15)
+            if (width >= 15)
                 TileWidth = width;
         }
 
