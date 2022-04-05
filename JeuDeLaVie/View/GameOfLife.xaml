@@ -1,0 +1,70 @@
+﻿<Window x:Class="JeuDeLaVie.View.GameOfLife"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JeuDeLaVie.View"
+        xmlns:vm="clr-namespace:JeuDeLaVie.ViewModel"
+        xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
+        d:DataContext="{d:DesignInstance vm:VM_Game}"
+        mc:Ignorable="d"
+        Title="GameOfLife" Height="480" Width="800" SizeToContent="WidthAndHeight">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60*"/>
+            <ColumnDefinition Width="40*"/>
+        </Grid.ColumnDefinitions>
+        <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="14" BorderThickness="1" BorderBrush="Black" Height="{Binding CanvasHeightPx}" Width="{Binding CanvasWidthPx}">
+            <ItemsControl ItemsSource="{Binding Formes}" IsHitTestVisible="{Binding CanClickForm}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="Transparent"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding Coord.PosX}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Coord.PosY}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Gray" BorderThickness="1">
+                            <Rectangle Width="{Binding Coord.TileWidth}" Height="{Binding Coord.TileWidth}" Fill="{Binding LifeFormColour}" StrokeThickness="1">
+                                <behaviours:Interaction.Triggers>
+                                    <behaviours:EventTrigger EventName="MouseDown">
+                                        <behaviours:InvokeCommandAction Command="{Binding LifeFormClickedEvent}" PassEventArgsToCommand="True"/>
+                                    </behaviours:EventTrigger>
+                                </behaviours:Interaction.Triggers>
+                            </Rectangle>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+        <StackPanel Grid.Column="1" Margin="0, 7">
+            <GroupBox Header="Configuration">
+                <StackPanel Margin="5">
+                    <Label FontWeight="Bold" FontSize="12">Générer une forme :</Label>
+                    <Button Margin="5" Command="{Binding}">Glider</Button>
+                    <Button Margin="5" Command="{Binding}">Blinker</Button>
+                    <Button Margin="5" Command="{Binding}">Boat</Button>
+                    <Button Margin="5" Command="{Binding}">Aléatoire</Button>
+                    <Label FontWeight="Bold" FontSize="12">Charger une forme :</Label>
+                    <Button Margin="5" Command="{Binding}">Charger</Button>
+                    <Label FontWeight="Bold" FontSize="12">Enregistrer une nouvelle forme :</Label>
+                    <Button Margin="5" Command="{Binding}">Enregistrer</Button>
+                </StackPanel>
+            </GroupBox>
+            <StackPanel Orientation="Horizontal">
+                <Label>Nombre d'itérations:</Label>
+                <TextBox Margin="5" Text="{Binding NoIterations}" Width="75" IsEnabled="{Binding}"/>
+                <CheckBox VerticalAlignment="Center" IsChecked="{Binding t}">Infini?</CheckBox>
+            </StackPanel>
+            <Button Background="Green" Command="{Binding StartGame}" Margin="15, 5">Démarrer</Button>
+            <Button Command="{Binding}" Margin="15, 5">Pause</Button>
+            <Label Content="{Binding CurrentIteration}"/>
+            <Slider Minimum="0.5" Maximum="1.5" Value="{Binding IterationSpeed}" Margin="10, 5" TickPlacement="BottomRight" IsSnapToTickEnabled="True" TickFrequency="0.5" Foreground="Black"/>
+        </StackPanel>
+    </Grid>
+</Window>
