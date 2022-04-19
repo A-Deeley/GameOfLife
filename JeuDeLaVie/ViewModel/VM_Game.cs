@@ -156,19 +156,58 @@ namespace JeuDeLaVie.ViewModel
             // Copy the initial view state from user input into the logical state.
             CopyFormsToArray2Dimensional(Formes);
 
+            Dictionary<LifeForm, ReadOnlyCollection<LifeForm>> testDict = new();
+            Func<Coordinate, ReadOnlyCollection<LifeForm>> GetNeighbourList = (coord) => FormNextGenerationIsAliveTest(coord);
+            foreach (LifeForm form in Formes)
+            {
+                testDict.Add(form, GetNeighbourList.Invoke(form.Coord));
+            }
             while (CurrentIteration < _iterations)
             {
                 //TODO: Implement pause feature.
+                // Test
 
-                await Task.Run(() => Thread.Sleep((int)(1000 * IterationSpeed))); //TODO: Change iteration speed to be a linear ms-based slider instead of a multiplier.
+                ApplyChangesTest()
+
+                
+                await Task.Delay((int)(1000 * IterationSpeed)); //TODO: Change iteration speed to be a linear ms-based slider instead of a multiplier.
                 // Compute next generation
-                List<int> changedForms = Iterate();
+                // REAL List<int> changedForms = TestIterate();
                 // Apply it to the view
-                ApplyChanges(changedForms);
+                //REAL ApplyChanges(changedForms);
                 // Increment iteration
                 CurrentIteration++;
             }
         }
+
+        private List<LifeForm> TestIterate(Dictionary<LifeForm, ReadOnlyCollection<LifeForm>> forms)
+        {
+            List<LifeForm> changedForms = new();
+
+            
+
+            foreach (KeyValuePair<LifeForm, ReadOnlyCollection<LifeForm>> kv in forms)
+            {
+                if (TestAlive(kv.Key, kv.Value))
+                    changedForms.Add(kv.Key);
+            }
+
+            return changedForms;
+        }
+
+        private bool TestAlive(in LifeForm form, in ReadOnlyCollection<LifeForm> neighbours)
+        {
+            int sumAlive = neighbours.Count((value) => value.IsAlive);
+            // If we found 3 alive neighbours, and the cell is dead, it becomes alive.
+            if (!form.IsAlive && sumAlive == 3) return true;
+            // If the form is alive and has more than 3 neighbours, it dies.
+            if (form.IsAlive  && sumAlive > 3) return false;
+            // If the form is alive and has 2 or 3 neighbours, it stays alives
+            if (form.IsAlive && (sumAlive is >= 2 and <= 3)) return true;
+
+            return false;
+        }
+
         /// <summary>
         /// Copies the given list object into the 2-dimensional logical state array.
         /// </summary>
@@ -213,6 +252,18 @@ namespace JeuDeLaVie.ViewModel
             foreach (int index in changes)
             {
                 Formes[index].ToggleState();
+            }
+            // Update logical state with changes.
+            CopyFormsToArray2Dimensional(Formes);
+        }
+
+        private void ApplyChangesTest(in List<LifeForm> changes, Dictionary<LifeForm, ReadOnlyCollection<LifeForm>> forms)
+        {
+            // Apply changes.
+
+            foreach (LifeForm form in changes)
+            {
+                form.ToggleState();
             }
             // Update logical state with changes.
             CopyFormsToArray2Dimensional(Formes);
@@ -283,6 +334,72 @@ namespace JeuDeLaVie.ViewModel
             if (isCurrentFormAlive && (sumAlive is >= 2 and <= 3)) return true;
 
             return false;
+        }
+
+        private ReadOnlyCollection<LifeForm> FormNextGenerationIsAliveTest(in Coordinate coord)
+        {
+            List<LifeForm> neighbouringCells = new();
+            LifeForm[,] copyOfListAs2dArray = CopyFormsToArray2DimensionalTest(Formes);
+
+            int leftBound = 0;
+            if (coord.Col - 1 < 0)
+                leftBound = 0;
+            else
+                leftBound = coord.Col - 1;
+
+            int rightBound = 0;
+            if (coord.Col + 1 >= _logicalState.GetLength(0))
+                rightBound = coord.Col;
+            else
+                rightBound = coord.Col + 1;
+            
+            // Check top row, if it exists
+            if (coord.Row - 1 >= 0)
+                for (int fCol = leftBound; fCol <= rightBound; fCol++)
+                {
+                    for (int fRow = coord.Row - 1; fRow < coord.Row; fRow++)
+                    {
+                        neighbouringCells.Add(copyOfListAs2dArray[fCol, fRow]);
+                    }
+                }
+
+            // Check same row
+            for (int fCol = leftBound; fCol <= rightBound; fCol++)
+            {
+                for (int fRow = coord.Row; fRow <= coord.Row; fRow++)
+                {
+                    if (fRow == coord.Row && fCol == coord.Col) continue;
+                    neighbouringCells.Add(copyOfListAs2dArray[fCol, fRow]);
+
+                }
+            }
+
+            // Check bottom row, if it exists
+            if (coord.Row + 1 < _logicalState.GetLength(1))
+                for (int fCol = leftBound; fCol <= rightBound; fCol++)
+                {
+                    for (int fRow = coord.Row + 1; fRow <= coord.Row + 1; fRow++)
+                    {
+                        neighbouringCells.Add(copyOfListAs2dArray[fCol, fRow]);
+                    }
+                }
+
+            return neighbouringCells.AsReadOnly();
+        }
+
+        private LifeForm[,] CopyFormsToArray2DimensionalTest(ObservableCollection<LifeForm> list)
+        {
+            LifeForm[,] testArray = new LifeForm[_canvasWidthTiles, _canvasHeightTiles];
+            for (int row = 0; row < _logicalState.GetLength(1); row++)
+            {
+                for (int col = 0; col < _logicalState.GetLength(0); col++)
+                {
+                    int index = row * _logicalState.GetLength(0) + col;
+                    testArray[col, row] = list.ElementAt(index);
+                }
+            }
+
+            return testArray;
         }
     }
 }
