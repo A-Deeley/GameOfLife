@@ -202,7 +202,7 @@ namespace JeuDeLaVie.ViewModel
         private void PauseExecute(object s) => IsPlaying = false;
         private void StepExecute(object s) => IsStepSet = true;
         private void ResumeExecute(object s) => IsPlaying = true;
-        private void DrawGliderShapeExecute(object s) => SetShape(3, 2, 1, 5, 6, 7, 8);
+        private void DrawGliderShapeExecute(object s) => SetShape(2, new int[,] { { 0, 1, 0 }, { 0, 0, 1 }, { 1, 1, 1 } });
         private void DrawBlinkerShapeExecute(object s) { }
         private void DrawBoatShapeExecute(object s) { }
         private void DrawRandomShapeExecute(object s) { }
@@ -220,26 +220,26 @@ namespace JeuDeLaVie.ViewModel
         private bool CanLoadShapeFromFileExecute(object s) => false;
         private bool CanSaveShapeToFileExecute(object s) => false;
         #endregion
-        private void SetShape(int boundingBoxSize, int targetOffset, params int[] indexes)
+        private void SetShape(int targetOffset, int[,] shape)
         {
-            Formes = GenerateFilledGrid(_canvasWidthTiles, _canvasHeightTiles, (int)_canvasTileSize);
+            if (shape.GetLength(1) > _canvasWidthTiles || shape.GetLength(0) > _canvasHeightTiles)
+                throw new ArgumentException(
+                $"Shape is bigger than current canvas size (shape: {shape.GetLength(1)} x {shape.GetLength(0)} vs. canvas: {_canvasWidthTiles} x {_canvasHeightTiles}).");
 
-            int rowOffset = (_canvasWidthTiles * targetOffset) + 2 < Formes.Count
-                ? _canvasWidthTiles * targetOffset
-                : 0;
-            int colOffset = targetOffset + 2< Formes.Count
-                ? targetOffset
-                : 0;
+            bool[,] array = new bool[_canvasWidthTiles, _canvasHeightTiles];
+            int rowOffset = (array.GetLength(1) - (shape.GetLength(1) + targetOffset) < 0)
+                ? 0
+                : targetOffset;
+            int colOffset = (array.GetLength(0) - (shape.GetLength(0) + targetOffset) < 0)
+                ? 0
+                : targetOffset;
 
-            for (int i = 0; i < indexes.Length; i++)
-            {
-                //                (col, row) = index in that grid (1D)
-                // 3x3 grid     : ( 2 ,  1 ) = index 5
-                // ?x? grid     : (   , ?/index]) = index (col*row)+col
-                // ex: 5x5 grid : ( 2 , 
-                int rowNumber = boundingBoxSize / indexes[i];
-                Formes[indexes[i]+rowOffset+colOffset].IsAlive = true;
-            }
+            for (int row = 0; row < shape.GetLength(1); row++)
+                for (int col = 0; col < shape.GetLength(0); col++)
+                    array[row + rowOffset, col + colOffset] = shape[row, col] == 1;
+
+            _logicalState = array;
+            Formes = Convert2DimensionalArrayToList(_logicalState);
         }
         #endregion
 
@@ -316,7 +316,7 @@ namespace JeuDeLaVie.ViewModel
             IsPlaying = true;
             IsGameStarted = true;
             // Copy the initial view state from user input into the logical state.
-            CopyFormsToArray2Dimensional(Formes);
+            _logicalState = ConvertListTo2DimensionalArray(Formes, _canvasWidthTiles, _canvasHeightTiles);
 
             while (((bool)IsInfiniteChecked && IsGameStarted) || CurrentIteration < _iterations)
             {
@@ -350,18 +350,45 @@ namespace JeuDeLaVie.ViewModel
         /// Copies the given list object into the 2-dimensional logical state array.
         /// </summary>
         /// <param name="list">List to copy.</param>
-        private void CopyFormsToArray2Dimensional(List<LifeForm> list)
+        private bool[,] ConvertListTo2DimensionalArray(List<LifeForm> list, int width, int height)
         {
-            for (int row = 0; row < _logicalState.GetLength(1); row++)
+            if (height * width != list.Count) 
+                throw new ArgumentException(
+                    $"Invalid array size or size parameters. Array parameters were smaller ({height * width} indexes) than the provided List ({list.Count} indexes)"
+                    );
+
+
+            bool[,] array = new bool[width, height];
+            for (int row = 0; row < height; row++)
             {
-                for (int col = 0; col < _logicalState.GetLength(0); col++)
+                for (int col = 0; col < width; col++)
                 {
-                    int index = row * _logicalState.GetLength(0) + col;
+                    int index = row * width + col;
                     bool isAlive = list.ElementAt(index).IsAlive;
-                    _logicalState[col, row] = isAlive;
+                    array[col, row] = isAlive;
                 }
             }
+
+            return array;
         }
+
+        private List<LifeForm> Convert2DimensionalArrayToList(bool[,] array)
+        {
+            List<LifeForm> list = new(array.Length);
+            for (int row = 0; row < array.GetLength(1); row++)
+            {
+                for (int col = 0; col < array.GetLength(0); col++)
+                {
+                    LifeForm form = new(col, row, (int)_canvasTileSize);
+                    form.IsAlive = array[row, col];
+                    list.Add(form);
+                }
+            }
+
+            return list;
+        }
+
+
         /// <summary>
         /// Computes 1 generation of the elements in the logical state array, storing the changed indexes in a list.
         /// </summary>
@@ -392,20 +419,9 @@ namespace JeuDeLaVie.ViewModel
                 Formes[index].ToggleState();
             }
             // Update logical state with changes.
-            CopyFormsToArray2Dimensional(Formes);
+            _logicalState = ConvertListTo2DimensionalArray(Formes, _canvasWidthTiles, _canvasHeightTiles);
         }
 
-        private void ApplyChangesTest(in List<LifeForm> changes, Dictionary<LifeForm, ReadOnlyCollection<LifeForm>> forms)
-        {
-            // Apply changes.
-
-            foreach (LifeForm form in changes)
-            {
-                form.ToggleState();
-            }
-            // Update logical state with changes.
-            CopyFormsToArray2Dimensional(Formes);
-        }
 
         /// <summary>
         /// Computes wether a LifeForm on a specified (x, y) is alive or dead in the next generation.
