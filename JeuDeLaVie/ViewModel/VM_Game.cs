@@ -3,6 +3,7 @@ using RelayCommandLibrary;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -20,7 +21,7 @@ namespace JeuDeLaVie.ViewModel
         /// <summary>
         ///  The ObservableCollection stores the view-representation of the game state.
         /// </summary>
-        private ObservableCollection<LifeForm> _formes;
+        private List<LifeForm> _formes;
         /// <summary>
         /// The 2-dimensional bool array stores the logical state of the game. Iterations are performed on this array and then copied to the display list.
         /// </summary>
@@ -29,7 +30,6 @@ namespace JeuDeLaVie.ViewModel
         /// Represents the state of the game, and while true prevents the user from interacting with the UI (ignores MouseDown events).
         /// </summary>
         private bool _isPlaying;
-        private bool _isPaused;
         private int _canvasWidthTiles;
         private int _canvasHeightTiles;
         private int _canvasWidthPx;
@@ -39,10 +39,6 @@ namespace JeuDeLaVie.ViewModel
         /// </summary>
         private double _canvasTileSize;
         /// <summary>
-        /// View-binding to enable infinite iterations.
-        /// </summary>
-        private bool? _infinite;
-        /// <summary>
         /// Amount of iterations (generations) to run the program for.
         /// </summary>
         private int _iterations;
@@ -51,8 +47,75 @@ namespace JeuDeLaVie.ViewModel
         /// Iteration speed in ms.
         /// </summary>
         private double _iterationSpeed;
+        private bool _step;
+        private bool _isGameStarted;
+        private bool? _isInfiniteChecked;
+        private bool _allowIterationInput;
+        private Visibility _pauseVisible;
+        private Visibility _stepVisible;
+        private Visibility _startVisible;
+        private Visibility _resumeVisible;
 
-        public ObservableCollection<LifeForm> Formes
+        public bool? IsInfiniteChecked
+        {
+            get => _isInfiniteChecked;
+            set
+            {
+                _isInfiniteChecked = value;
+                OnPropertyChanged();
+                AllowIterationInput = !value ?? true;
+            }
+        }
+
+        public bool AllowIterationInput
+        {
+            get => _allowIterationInput;
+            set
+            {
+                _allowIterationInput = value;
+                OnPropertyChanged();
+            }
+        }
+        public Visibility PauseVisible
+        {
+            get => _pauseVisible;
+            set
+            {
+                _pauseVisible = value;
+                OnPropertyChanged();
+            }
+        }
+        public Visibility StepVisible
+        {
+            get => _stepVisible;
+            set
+            {
+                _stepVisible = value;
+                OnPropertyChanged();
+            }
+
+        }
+        public Visibility StartVisible
+        {
+            get => _startVisible;
+            set
+            {
+                _startVisible = value;
+                OnPropertyChanged();
+            }
+        }
+        public Visibility ResumeVisible
+        {
+            get => _resumeVisible;
+            set
+            {
+                _resumeVisible = value;
+                OnPropertyChanged();
+            }
+
+        }
+
+        public List<LifeForm> Formes
         {
             get => _formes;
             set { if (value is not null) { _formes = value; OnPropertyChanged(); } }
@@ -67,12 +130,6 @@ namespace JeuDeLaVie.ViewModel
         {
             get => _canvasHeightPx;
             set { _canvasHeightPx = value; OnPropertyChanged(); }
-        }
-
-        public bool? Infinite
-        {
-            get => _infinite;
-            set { _infinite = value; OnPropertyChanged(); }
         }
 
         public string NoIterations
@@ -102,6 +159,16 @@ namespace JeuDeLaVie.ViewModel
             get => _isPlaying;
             set { _isPlaying = value; OnPropertyChanged(); }
         }
+
+        private bool IsGameStarted
+        {
+            get => _isGameStarted;
+            set
+            {
+                _isGameStarted = value;
+                OnPropertyChanged();
+            }
+        }
         /// <summary>
         /// Blocks MouseDown events from occuring if the game is currently iterating.
         /// </summary>
@@ -110,7 +177,71 @@ namespace JeuDeLaVie.ViewModel
             get => !IsPlaying;
         }
 
+        public bool IsStepSet
+        { get => _step; set
+            {
+                _step = value;
+                OnPropertyChanged();
+            }
+        }
+        #region ICommands
         public RelayCommand StartGame { get; private set; }
+        public RelayCommand Pause { get; private set; }
+        public RelayCommand Step { get; private set; }
+        public RelayCommand Resume { get; private set; }
+        public RelayCommand DrawGliderShape { get; private set; }
+        public RelayCommand DrawBlinkerShape { get; private set; }
+        public RelayCommand DrawBoatShape { get; private set; }
+        public RelayCommand DrawRandomShape { get; private set; }
+        public RelayCommand LoadShapeFromFile { get; private set; }
+        public RelayCommand SaveShapeToFile { get; private set; }
+        #endregion
+
+        #region ICommand Methods
+        #region executes
+        private void PauseExecute(object s) => IsPlaying = false;
+        private void StepExecute(object s) => IsStepSet = true;
+        private void ResumeExecute(object s) => IsPlaying = true;
+        private void DrawGliderShapeExecute(object s) => SetShape(3, 2, 1, 5, 6, 7, 8);
+        private void DrawBlinkerShapeExecute(object s) { }
+        private void DrawBoatShapeExecute(object s) { }
+        private void DrawRandomShapeExecute(object s) { }
+        private void LoadShapeFromFileExecute(object s) { }
+        private void SaveShapeToFileExecute(object s) { }
+        #endregion
+        #region canExecutes
+        private bool CanPauseExecute(object s) => IsGameStarted && IsPlaying;
+        private bool CanStepExecute(object s) => IsGameStarted && !IsPlaying;
+        private bool CanResumeExecute(object s) => IsGameStarted && !IsPlaying;
+        private bool CanDrawGliderShapeExecute(object s) => !IsGameStarted && _canvasHeightTiles >= 3 && _canvasWidthTiles >= 3;
+        private bool CanDrawBlinkerShapeExecute(object s) => !IsGameStarted && _canvasHeightTiles >= 3 && _canvasWidthTiles >= 3;
+        private bool CanDrawBoatShapeExecute(object s) => !IsGameStarted && _canvasHeightTiles >= 3 && _canvasWidthTiles >= 3;
+        private bool CanDrawRandomShapeExecute(object s) => !IsGameStarted;
+        private bool CanLoadShapeFromFileExecute(object s) => false;
+        private bool CanSaveShapeToFileExecute(object s) => false;
+        #endregion
+        private void SetShape(int boundingBoxSize, int targetOffset, params int[] indexes)
+        {
+            Formes = GenerateFilledGrid(_canvasWidthTiles, _canvasHeightTiles, (int)_canvasTileSize);
+
+            int rowOffset = (_canvasWidthTiles * targetOffset) + 2 < Formes.Count
+                ? _canvasWidthTiles * targetOffset
+                : 0;
+            int colOffset = targetOffset + 2< Formes.Count
+                ? targetOffset
+                : 0;
+
+            for (int i = 0; i < indexes.Length; i++)
+            {
+                //                (col, row) = index in that grid (1D)
+                // 3x3 grid     : ( 2 ,  1 ) = index 5
+                // ?x? grid     : (   , ?/index]) = index (col*row)+col
+                // ex: 5x5 grid : ( 2 , 
+                int rowNumber = boundingBoxSize / indexes[i];
+                Formes[indexes[i]+rowOffset+colOffset].IsAlive = true;
+            }
+        }
+        #endregion
 
         public VM_Game(int canvasWidth, int canvasHeight, double tileSize)
         {
@@ -119,100 +250,107 @@ namespace JeuDeLaVie.ViewModel
             _canvasHeightTiles = canvasHeight;
             CanvasWidthPx = canvasWidth * (int)_canvasTileSize;
             CanvasHeightPx = canvasHeight * (int)_canvasTileSize;
-            Formes = new();
             _logicalState = new bool[_canvasWidthTiles, _canvasHeightTiles];
-            Infinite = false;
+
+            PropertyChanged += OnGameStatePropertyChangedUpdateVisibility;
             CurrentIteration = 0;
-            IterationSpeed = 1;
+            IterationSpeed = 1000;
+            IsGameStarted = false;
+            IsInfiniteChecked = false;
+            IsStepSet = false;
 
             // Generate initial view state. Resize tiles if window size permits it.
-            if ((int)_canvasTileSize > 15)
-                for (int row = 0; row < _logicalState.GetLength(1); row++)
-                {
-                    for (int col = 0; col < _logicalState.GetLength(0); col++)
-                    {
-                        Formes.Add(new(col, row, (int)_canvasTileSize));
-                    }
-                }
-            else
-                for (int row = 0; row < _logicalState.GetLength(1); row++)
-                {
-                    for (int col = 0; col < _logicalState.GetLength(0); col++)
-                    {
-                        Formes.Add(new(col, row));
-                    }
-                }
+            if ((int)_canvasTileSize < 15)
+                _canvasTileSize = 15;
+            Formes = GenerateFilledGrid(_canvasWidthTiles, _canvasHeightTiles, (int)_canvasTileSize);
+            OnPropertyChanged(nameof(Formes));
 
-            StartGame = new(exec => Run());
+            DrawGliderShape = new(DrawGliderShapeExecute, CanDrawGliderShapeExecute);
+
+            StartGame = new(exec => _ = Run());
         }
+
+        private static List<LifeForm> GenerateFilledGrid(int width, int height, int tileSize)
+        {
+            List<LifeForm> forms = new(width * height);
+            for (int row = 0; row < height; row++)
+            {
+                for (int col = 0; col < width; col++)
+                {
+                    forms.Add(new(col, row, (int)tileSize));
+                }
+            }
+
+            return forms;
+        }
+
+        private void OnGameStatePropertyChangedUpdateVisibility(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(IsGameStarted) || e.PropertyName == nameof(IsPlaying))
+            {
+                PauseVisible = (IsGameStarted && IsPlaying)
+                    ? Visibility.Visible
+                    : Visibility.Hidden;
+
+                StepVisible = (IsGameStarted && !IsPlaying)
+                    ? Visibility.Visible
+                    : Visibility.Hidden;
+
+                ResumeVisible = (IsGameStarted && !IsPlaying)
+                    ? Visibility.Visible
+                    : Visibility.Hidden;
+
+                StartVisible = (!IsPlaying)
+                    ? Visibility.Visible
+                    : Visibility.Hidden;
+
+                OnPropertyChanged(nameof(CanClickForm));
+            }
+        }
+
         /// <summary>
         /// Main game loop.
         /// </summary>
-        private async void Run()
+        private async Task Run()
         {
             IsPlaying = true;
-            // Make sure the property value disabling MouseDown is correctly updated to the view.
-            OnPropertyChanged(nameof(CanClickForm));
+            IsGameStarted = true;
             // Copy the initial view state from user input into the logical state.
             CopyFormsToArray2Dimensional(Formes);
 
-            Dictionary<LifeForm, ReadOnlyCollection<LifeForm>> testDict = new();
-            Func<Coordinate, ReadOnlyCollection<LifeForm>> GetNeighbourList = (coord) => FormNextGenerationIsAliveTest(coord);
-            foreach (LifeForm form in Formes)
+            while (((bool)IsInfiniteChecked && IsGameStarted) || CurrentIteration < _iterations)
             {
-                testDict.Add(form, GetNeighbourList.Invoke(form.Coord));
-            }
-            while (CurrentIteration < _iterations)
-            {
-                //TODO: Implement pause feature.
-                // Test
-
-                ApplyChangesTest()
-
-                
-                await Task.Delay((int)(1000 * IterationSpeed)); //TODO: Change iteration speed to be a linear ms-based slider instead of a multiplier.
+                if (!IsStepSet) await Task.Delay((int)IterationSpeed);
                 // Compute next generation
-                // REAL List<int> changedForms = TestIterate();
+                List<int> changedForms = Iterate();
                 // Apply it to the view
-                //REAL ApplyChanges(changedForms);
+                ApplyChanges(changedForms);
                 // Increment iteration
                 CurrentIteration++;
+
+                // if pause is pressed, idle
+                while (!IsPlaying)
+                {
+                    IsStepSet = false;
+                    await Task.Delay(25);
+                    // Allow player to step 1 iteration at a time.
+                    if (IsStepSet)
+                        break;
+                }
+
             }
+            IsGameStarted = false;
+            IsPlaying = false;
+            IsStepSet = false;
+            CurrentIteration = 0;
         }
 
-        private List<LifeForm> TestIterate(Dictionary<LifeForm, ReadOnlyCollection<LifeForm>> forms)
-        {
-            List<LifeForm> changedForms = new();
-
-            
-
-            foreach (KeyValuePair<LifeForm, ReadOnlyCollection<LifeForm>> kv in forms)
-            {
-                if (TestAlive(kv.Key, kv.Value))
-                    changedForms.Add(kv.Key);
-            }
-
-            return changedForms;
-        }
-
-        private bool TestAlive(in LifeForm form, in ReadOnlyCollection<LifeForm> neighbours)
-        {
-            int sumAlive = neighbours.Count((value) => value.IsAlive);
-            // If we found 3 alive neighbours, and the cell is dead, it becomes alive.
-            if (!form.IsAlive && sumAlive == 3) return true;
-            // If the form is alive and has more than 3 neighbours, it dies.
-            if (form.IsAlive  && sumAlive > 3) return false;
-            // If the form is alive and has 2 or 3 neighbours, it stays alives
-            if (form.IsAlive && (sumAlive is >= 2 and <= 3)) return true;
-
-            return false;
-        }
 
         /// <summary>
         /// Copies the given list object into the 2-dimensional logical state array.
         /// </summary>
         /// <param name="list">List to copy.</param>
-        private void CopyFormsToArray2Dimensional(ObservableCollection<LifeForm> list)
+        private void CopyFormsToArray2Dimensional(List<LifeForm> list)
         {
             for (int row = 0; row < _logicalState.GetLength(1); row++)
             {
@@ -334,72 +472,6 @@ namespace JeuDeLaVie.ViewModel
             if (isCurrentFormAlive && (sumAlive is >= 2 and <= 3)) return true;
 
             return false;
-        }
-
-        private ReadOnlyCollection<LifeForm> FormNextGenerationIsAliveTest(in Coordinate coord)
-        {
-            List<LifeForm> neighbouringCells = new();
-            LifeForm[,] copyOfListAs2dArray = CopyFormsToArray2DimensionalTest(Formes);
-
-            int leftBound = 0;
-            if (coord.Col - 1 < 0)
-                leftBound = 0;
-            else
-                leftBound = coord.Col - 1;
-
-            int rightBound = 0;
-            if (coord.Col + 1 >= _logicalState.GetLength(0))
-                rightBound = coord.Col;
-            else
-                rightBound = coord.Col + 1;
-            
-            // Check top row, if it exists
-            if (coord.Row - 1 >= 0)
-                for (int fCol = leftBound; fCol <= rightBound; fCol++)
-                {
-                    for (int fRow = coord.Row - 1; fRow < coord.Row; fRow++)
-                    {
-                        neighbouringCells.Add(copyOfListAs2dArray[fCol, fRow]);
-                    }
-                }
-
-            // Check same row
-            for (int fCol = leftBound; fCol <= rightBound; fCol++)
-            {
-                for (int fRow = coord.Row; fRow <= coord.Row; fRow++)
-                {
-                    if (fRow == coord.Row && fCol == coord.Col) continue;
-                    neighbouringCells.Add(copyOfListAs2dArray[fCol, fRow]);
-
-                }
-            }
-
-            // Check bottom row, if it exists
-            if (coord.Row + 1 < _logicalState.GetLength(1))
-                for (int fCol = leftBound; fCol <= rightBound; fCol++)
-                {
-                    for (int fRow = coord.Row + 1; fRow <= coord.Row + 1; fRow++)
-                    {
-                        neighbouringCells.Add(copyOfListAs2dArray[fCol, fRow]);
-                    }
-                }
-
-            return neighbouringCells.AsReadOnly();
-        }
-
-        private LifeForm[,] CopyFormsToArray2DimensionalTest(ObservableCollection<LifeForm> list)
-        {
-            LifeForm[,] testArray = new LifeForm[_canvasWidthTiles, _canvasHeightTiles];
-            for (int row = 0; row < _logicalState.GetLength(1); row++)
-            {
-                for (int col = 0; col < _logicalState.GetLength(0); col++)
-                {
-                    int index = row * _logicalState.GetLength(0) + col;
-                    testArray[col, row] = list.ElementAt(index);
-                }
-            }
-
-            return testArray;
         }
     }
 }

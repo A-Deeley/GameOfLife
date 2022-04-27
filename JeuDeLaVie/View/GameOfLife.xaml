@@ -46,25 +46,27 @@
             <GroupBox Header="Configuration">
                 <StackPanel Margin="5">
                     <Label FontWeight="Bold" FontSize="12">Générer une forme :</Label>
-                    <Button Margin="5" Command="{Binding}">Glider</Button>
-                    <Button Margin="5" Command="{Binding}">Blinker</Button>
-                    <Button Margin="5" Command="{Binding}">Boat</Button>
-                    <Button Margin="5" Command="{Binding}">Aléatoire</Button>
+                    <Button Margin="5" Command="{Binding DrawGliderShape}">Glider</Button>
+                    <Button Margin="5" Command="{Binding DrawBlinkerShape}">Blinker</Button>
+                    <Button Margin="5" Command="{Binding DrawBoatShape}">Boat</Button>
+                    <Button Margin="5" Command="{Binding DrawRandomShape}">Aléatoire</Button>
                     <Label FontWeight="Bold" FontSize="12">Charger une forme :</Label>
-                    <Button Margin="5" Command="{Binding}">Charger</Button>
+                    <Button Margin="5" Command="{Binding LoadShapeFromFile}">Charger</Button>
                     <Label FontWeight="Bold" FontSize="12">Enregistrer une nouvelle forme :</Label>
-                    <Button Margin="5" Command="{Binding}">Enregistrer</Button>
+                    <Button Margin="5" Command="{Binding SaveShapeToFile}">Enregistrer</Button>
                 </StackPanel>
             </GroupBox>
             <StackPanel Orientation="Horizontal">
                 <Label>Nombre d'itérations:</Label>
-                <TextBox Margin="5" Text="{Binding NoIterations}" Width="75" IsEnabled="{Binding}"/>
-                <CheckBox VerticalAlignment="Center" IsChecked="{Binding t}">Infini?</CheckBox>
+                <TextBox Margin="5" Text="{Binding NoIterations}" Width="75" IsEnabled="{Binding AllowIterationInput}"/>
+                <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsInfiniteChecked}">Infini?</CheckBox>
             </StackPanel>
-            <Button Background="Green" Command="{Binding StartGame}" Margin="15, 5">Démarrer</Button>
-            <Button Command="{Binding}" Margin="15, 5">Pause</Button>
+            <Button Background="Green" Command="{Binding StartGame}" Margin="15, 5" Visibility="{Binding StartVisible}">Démarrer</Button>
+            <Button Background="Green" Command="{Binding Resume}" Margin="15, -25, 15, 5" Visibility="{Binding ResumeVisible}">Continuer</Button>
+            <Button Background="Red" Command="{Binding Pause}" Visibility="{Binding PauseVisible}" Margin="15, 5">Pause</Button>
+            <Button Background="Orange" Command="{Binding Step}" Visibility="{Binding StepVisible}" Margin="15, -25, 15, 5">Itérer (1 fois)</Button>
             <Label Content="{Binding CurrentIteration}"/>
-            <Slider Minimum="0.5" Maximum="1.5" Value="{Binding IterationSpeed}" Margin="10, 5" TickPlacement="BottomRight" IsSnapToTickEnabled="True" TickFrequency="0.5" Foreground="Black"/>
+            <Slider Minimum="250" Maximum="1500" Value="{Binding IterationSpeed}" IsDirectionReversed="True" Margin="10, 5" TickPlacement="BottomRight" IsSnapToTickEnabled="False" TickFrequency="100" Foreground="Black"/>
         </StackPanel>
     </Grid>
 </Window>
