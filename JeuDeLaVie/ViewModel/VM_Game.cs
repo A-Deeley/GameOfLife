@@ -281,7 +281,7 @@ namespace JeuDeLaVie.ViewModel
 
             PropertyChanged += OnGameStatePropertyChangedUpdateVisibility;
             CurrentIteration = 0;
-            IterationSpeed = 50;
+            IterationSpeed = 1;
             IsGameStarted = false;
             IsInfiniteChecked = false;
             IsStepSet = false;
