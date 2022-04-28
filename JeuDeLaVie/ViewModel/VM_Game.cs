@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 namespace JeuDeLaVie.ViewModel
 {
@@ -191,7 +192,7 @@ namespace JeuDeLaVie.ViewModel
         public RelayCommand Resume { get; private set; }
         public RelayCommand DrawGliderShape { get; private set; }
         public RelayCommand DrawBlinkerShape { get; private set; }
-        public RelayCommand DrawBoatShape { get; private set; }
+        public RelayCommand DrawGunShape { get; private set; }
         public RelayCommand DrawRandomShape { get; private set; }
         public RelayCommand LoadShapeFromFile { get; private set; }
         public RelayCommand SaveShapeToFile { get; private set; }
@@ -202,10 +203,36 @@ namespace JeuDeLaVie.ViewModel
         private void PauseExecute(object s) => IsPlaying = false;
         private void StepExecute(object s) => IsStepSet = true;
         private void ResumeExecute(object s) => IsPlaying = true;
-        private void DrawGliderShapeExecute(object s) => SetShape(2, new int[,] { { 0, 1, 0 }, { 0, 0, 1 }, { 1, 1, 1 } });
-        private void DrawBlinkerShapeExecute(object s) { }
-        private void DrawBoatShapeExecute(object s) { }
-        private void DrawRandomShapeExecute(object s) { }
+        private void DrawGliderShapeExecute(object s) => SetShape(GetCenterOffset((3, 3)), new int[,] { { 0, 1, 0 }, { 0, 0, 1 }, { 1, 1, 1 } });
+        private void DrawBlinkerShapeExecute(object s) => SetShape(GetCenterOffset((3, 3)), new int[,] { { 0, 0, 0 }, { 1, 1, 1 }, { 0, 0, 0 } });
+        private void DrawGunExecute(object s) => SetShape(GetCenterOffset((21, 33)), new int[,] {
+                {1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+        });
+        private void DrawRandomShapeExecute(object s)
+        {
+            Formes = GenerateFilledGridRandom(_canvasWidthTiles, _canvasHeightTiles, (int)_canvasTileSize);
+            _logicalState = ConvertListTo2DimensionalArray(Formes, _canvasWidthTiles, _canvasHeightTiles);
+        }
         private void LoadShapeFromFileExecute(object s) { }
         private void SaveShapeToFileExecute(object s) { }
         #endregion
@@ -215,28 +242,28 @@ namespace JeuDeLaVie.ViewModel
         private bool CanResumeExecute(object s) => IsGameStarted && !IsPlaying;
         private bool CanDrawGliderShapeExecute(object s) => !IsGameStarted && _canvasHeightTiles >= 3 && _canvasWidthTiles >= 3;
         private bool CanDrawBlinkerShapeExecute(object s) => !IsGameStarted && _canvasHeightTiles >= 3 && _canvasWidthTiles >= 3;
-        private bool CanDrawBoatShapeExecute(object s) => !IsGameStarted && _canvasHeightTiles >= 3 && _canvasWidthTiles >= 3;
+        private bool CanDrawGunExecute(object s) => !IsGameStarted && _canvasHeightTiles >= 21 && _canvasWidthTiles >= 33;
         private bool CanDrawRandomShapeExecute(object s) => !IsGameStarted;
         private bool CanLoadShapeFromFileExecute(object s) => false;
         private bool CanSaveShapeToFileExecute(object s) => false;
         #endregion
-        private void SetShape(int targetOffset, int[,] shape)
+        private void SetShape((int colOffset, int rowOffset) target, int[,] shape)
         {
             if (shape.GetLength(1) > _canvasWidthTiles || shape.GetLength(0) > _canvasHeightTiles)
                 throw new ArgumentException(
                 $"Shape is bigger than current canvas size (shape: {shape.GetLength(1)} x {shape.GetLength(0)} vs. canvas: {_canvasWidthTiles} x {_canvasHeightTiles}).");
 
             bool[,] array = new bool[_canvasWidthTiles, _canvasHeightTiles];
-            int rowOffset = (array.GetLength(1) - (shape.GetLength(1) + targetOffset) < 0)
+            target.rowOffset = (array.GetLength(1) - (shape.GetLength(1) + target.rowOffset) < 0)
                 ? 0
-                : targetOffset;
-            int colOffset = (array.GetLength(0) - (shape.GetLength(0) + targetOffset) < 0)
-                ? 0
-                : targetOffset;
+                : target.rowOffset;
+            target.colOffset = (array.GetLength(0) - (shape.GetLength(0) + target.colOffset) < 0)
+                ?  0
+                : target.colOffset;
 
             for (int row = 0; row < shape.GetLength(1); row++)
                 for (int col = 0; col < shape.GetLength(0); col++)
-                    array[row + rowOffset, col + colOffset] = shape[row, col] == 1;
+                    array[col + target.colOffset, row + target.rowOffset] = shape[col, row] == 1;
 
             _logicalState = array;
             Formes = Convert2DimensionalArrayToList(_logicalState);
@@ -254,7 +281,7 @@ namespace JeuDeLaVie.ViewModel
 
             PropertyChanged += OnGameStatePropertyChangedUpdateVisibility;
             CurrentIteration = 0;
-            IterationSpeed = 1000;
+            IterationSpeed = 50;
             IsGameStarted = false;
             IsInfiniteChecked = false;
             IsStepSet = false;
@@ -265,9 +292,27 @@ namespace JeuDeLaVie.ViewModel
             Formes = GenerateFilledGrid(_canvasWidthTiles, _canvasHeightTiles, (int)_canvasTileSize);
             OnPropertyChanged(nameof(Formes));
 
+            StartGame = new((s) => _ = Run());
+            Pause = new(PauseExecute, CanPauseExecute);
+            Step = new(StepExecute, CanStepExecute);
+            Resume = new(ResumeExecute, CanResumeExecute);
             DrawGliderShape = new(DrawGliderShapeExecute, CanDrawGliderShapeExecute);
+            DrawBlinkerShape = new(DrawBlinkerShapeExecute, CanDrawBlinkerShapeExecute);
+            DrawGunShape = new(DrawGunExecute, CanDrawGunExecute);
+            DrawRandomShape = new(DrawRandomShapeExecute, CanDrawRandomShapeExecute);
+            LoadShapeFromFile = new(LoadShapeFromFileExecute, CanLoadShapeFromFileExecute);
+            SaveShapeToFile = new(SaveShapeToFileExecute, CanSaveShapeToFileExecute);
+        }
 
-            StartGame = new(exec => _ = Run());
+        private (int, int) GetCenterOffset((int width, int height) boundingBox)
+        {
+            int centerCol = (int)(0.5 * _canvasWidthTiles);
+            int centerRow = (int)(0.5 * _canvasHeightTiles);
+
+            centerCol = centerCol - (int)(0.5 * boundingBox.width);
+            centerRow = centerRow - (int)(0.5 * boundingBox.height);
+
+            return (centerCol, centerRow);            
         }
 
         private static List<LifeForm> GenerateFilledGrid(int width, int height, int tileSize)
@@ -282,6 +327,19 @@ namespace JeuDeLaVie.ViewModel
             }
 
             return forms;
+        }
+
+        private static List<LifeForm> GenerateFilledGridRandom(int width, int height, int tileSize)
+        {
+            List<LifeForm> filledForms = GenerateFilledGrid(width, height, tileSize);
+            Random r = new(Environment.TickCount);
+
+            foreach (LifeForm form in filledForms)
+            {
+                form.IsAlive = r.Next() % 2 == 0;
+            }
+
+            return filledForms;
         }
 
         private void OnGameStatePropertyChangedUpdateVisibility(object? sender, PropertyChangedEventArgs e)
@@ -317,6 +375,8 @@ namespace JeuDeLaVie.ViewModel
             IsGameStarted = true;
             // Copy the initial view state from user input into the logical state.
             _logicalState = ConvertListTo2DimensionalArray(Formes, _canvasWidthTiles, _canvasHeightTiles);
+            if ((bool)IsInfiniteChecked)
+                NoIterations = "0";
 
             while (((bool)IsInfiniteChecked && IsGameStarted) || CurrentIteration < _iterations)
             {
@@ -343,6 +403,7 @@ namespace JeuDeLaVie.ViewModel
             IsPlaying = false;
             IsStepSet = false;
             CurrentIteration = 0;
+            CommandManager.InvalidateRequerySuggested();
         }
 
 

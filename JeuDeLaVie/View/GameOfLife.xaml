@@ -48,7 +48,7 @@
                     <Label FontWeight="Bold" FontSize="12">Générer une forme :</Label>
                     <Button Margin="5" Command="{Binding DrawGliderShape}">Glider</Button>
                     <Button Margin="5" Command="{Binding DrawBlinkerShape}">Blinker</Button>
-                    <Button Margin="5" Command="{Binding DrawBoatShape}">Boat</Button>
+                    <Button Margin="5" Command="{Binding DrawGunShape}">Gun</Button>
                     <Button Margin="5" Command="{Binding DrawRandomShape}">Aléatoire</Button>
                     <Label FontWeight="Bold" FontSize="12">Charger une forme :</Label>
                     <Button Margin="5" Command="{Binding LoadShapeFromFile}">Charger</Button>
@@ -65,8 +65,12 @@
             <Button Background="Green" Command="{Binding Resume}" Margin="15, -25, 15, 5" Visibility="{Binding ResumeVisible}">Continuer</Button>
             <Button Background="Red" Command="{Binding Pause}" Visibility="{Binding PauseVisible}" Margin="15, 5">Pause</Button>
             <Button Background="Orange" Command="{Binding Step}" Visibility="{Binding StepVisible}" Margin="15, -25, 15, 5">Itérer (1 fois)</Button>
-            <Label Content="{Binding CurrentIteration}"/>
-            <Slider Minimum="250" Maximum="1500" Value="{Binding IterationSpeed}" IsDirectionReversed="True" Margin="10, 5" TickPlacement="BottomRight" IsSnapToTickEnabled="False" TickFrequency="100" Foreground="Black"/>
+            <Label Content="{Binding CurrentIteration}" ContentStringFormat="# d'itération: {0}"/>
+            <Slider Minimum="50" Maximum="1000" Value="{Binding IterationSpeed}" IsDirectionReversed="True" Margin="10, 5" TickPlacement="BottomRight" IsSnapToTickEnabled="False" TickFrequency="100" Foreground="Black"/>
+            <Grid>
+                <Label HorizontalAlignment="Left">Lent (1s / iteration)</Label>
+                <Label HorizontalAlignment="Right">Rapide (0.05s / iteration)</Label>
+            </Grid>
         </StackPanel>
     </Grid>
 </Window>
