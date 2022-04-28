@@ -1,10 +1,14 @@
 ﻿using JeuDeLaVie.Model;
+using JeuDeLaVie.Properties;
+using Microsoft.Win32;
 using RelayCommandLibrary;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -233,8 +237,51 @@ namespace JeuDeLaVie.ViewModel
             Formes = GenerateFilledGridRandom(_canvasWidthTiles, _canvasHeightTiles, (int)_canvasTileSize);
             _logicalState = ConvertListTo2DimensionalArray(Formes, _canvasWidthTiles, _canvasHeightTiles);
         }
-        private void LoadShapeFromFileExecute(object s) { }
-        private void SaveShapeToFileExecute(object s) { }
+        private async void LoadShapeFromFileExecute(object s)
+        {
+            OpenFileDialog loadFileDialog = new();
+            loadFileDialog.Filter = "Game of life files (*.gol)|*.gol";
+            loadFileDialog.InitialDirectory = Path.Combine(
+                Environment.CurrentDirectory, 
+                Resources.SaveDirectory,
+                Resources.UserSaves);
+
+            if (loadFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    _logicalState = await ConvertFileToGridAsync(loadFileDialog.FileName);
+                    Formes = Convert2DimensionalArrayToList(_logicalState);
+                }
+                catch(InvalidOperationException e)
+                {
+
+                }
+
+            }
+        }
+
+        private void SaveShapeToFileExecute(object s)
+        {
+            SaveFileDialog saveFileDialog = new();
+            saveFileDialog.Filter = "Game of life files (*.gol)|*.gol";
+            saveFileDialog.InitialDirectory = Path.Combine(
+                Environment.CurrentDirectory,
+                Resources.SaveDirectory,
+                Resources.UserSaves);
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    ConvertGridToFile(_logicalState, _canvasWidthTiles, _canvasHeightTiles, Path.Combine(Environment.CurrentDirectory, Resources.SaveDirectory, Resources.UserSaves, saveFileDialog.FileName));
+                }
+                catch
+                (Exception e)
+                { }
+            }
+        }
+
         #endregion
         #region canExecutes
         private bool CanPauseExecute(object s) => IsGameStarted && IsPlaying;
@@ -244,8 +291,40 @@ namespace JeuDeLaVie.ViewModel
         private bool CanDrawBlinkerShapeExecute(object s) => !IsGameStarted && _canvasHeightTiles >= 3 && _canvasWidthTiles >= 3;
         private bool CanDrawGunExecute(object s) => !IsGameStarted && _canvasHeightTiles >= 21 && _canvasWidthTiles >= 33;
         private bool CanDrawRandomShapeExecute(object s) => !IsGameStarted;
-        private bool CanLoadShapeFromFileExecute(object s) => false;
-        private bool CanSaveShapeToFileExecute(object s) => false;
+        private bool CanLoadShapeFromFileExecute(object s) => true;
+        private bool CanSaveShapeToFileExecute(object s) => true;
+        private async Task<bool[,]> ConvertFileToGridAsync(string fileName)
+        {
+            GameState? loadedState;
+            using (StreamReader reader = new(fileName))
+            {
+                string json = await reader.ReadToEndAsync();
+
+                loadedState = JsonSerializer.Deserialize<GameState>(json);
+            }
+
+            if (loadedState is null)
+                throw new InvalidOperationException();
+
+            _canvasWidthTiles = loadedState.CanvasWidth;
+            _canvasHeightTiles = loadedState.CanvasHeight;
+            return ConvertListTo2DimensionalArray(loadedState.LifeForms, _canvasWidthTiles, _canvasHeightTiles);
+        }
+
+        private void ConvertGridToFile(bool[,] grid, int canvasWidth, int canvasHeight, string filePathAndName)
+        {
+            GameState state = new()
+            {
+                CanvasWidth = canvasWidth,
+                CanvasHeight = canvasHeight,
+                LifeForms = Convert2DimensionalArrayToList(grid)
+            };
+
+            using (StreamWriter writer = new(filePathAndName, false))
+            {
+                writer.WriteLine(JsonSerializer.Serialize(state, new() { WriteIndented=true}));
+            }
+        }
         #endregion
         private void SetShape((int colOffset, int rowOffset) target, int[,] shape)
         {
@@ -281,7 +360,7 @@ namespace JeuDeLaVie.ViewModel
 
             PropertyChanged += OnGameStatePropertyChangedUpdateVisibility;
             CurrentIteration = 0;
-            IterationSpeed = 1;
+            IterationSpeed = 50;
             IsGameStarted = false;
             IsInfiniteChecked = false;
             IsStepSet = false;

@@ -11,20 +11,22 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 namespace JeuDeLaVie.Model
 {
     /// <summary>
     /// Model representing one square in the game board.
     /// </summary>
-    internal class LifeForm : INotifyPropertyChanged
+    public class LifeForm : INotifyPropertyChanged
     {
         #region Events
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName]string caller = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(caller));
         #endregion
-
+        [JsonIgnore]
         private bool _isAlive;
+        [JsonIgnore]
         private Brush _lifeFormColour;
         #region Bindings
         /// <summary>
@@ -44,6 +46,8 @@ namespace JeuDeLaVie.Model
         /// <summary>
         /// Depending on the state, the square is either black (alive) or white (dead).
         /// </summary>
+        /// 
+        [JsonIgnore]
         public Brush LifeFormColour {
             get => _lifeFormColour;
             set
@@ -57,10 +61,11 @@ namespace JeuDeLaVie.Model
         /// </summary>
         public RelayCommand LifeFormClickedEvent { get; private set; }
         #endregion
+
         /// <summary>
         /// Represents the position (x, y) of the form in the game grid.
         /// </summary>
-        public Coordinate Coord { get; private set; }
+        public Coordinate Coord { get; set; }
 
         /// <summary>
         /// Create a LifeForm object with default tile width.
@@ -75,6 +80,7 @@ namespace JeuDeLaVie.Model
             LifeFormClickedEvent = new((caller) => IsAlive = !IsAlive);
         }
 
+
         /// <summary>
         /// Create a LifeForm object with a specific tile width.
         /// </summary>
@@ -86,6 +92,7 @@ namespace JeuDeLaVie.Model
         {
             Coord.SetTileWidth(tileWidth);
         }
+        public LifeForm() { }
 
         public void ToggleState()
         {

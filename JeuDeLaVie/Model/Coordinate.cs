@@ -9,7 +9,9 @@ namespace JeuDeLaVie.Model
     /// <summary>
     /// Represents a position on the game board. Stores values as discrete values, but provides dynamic positioning attributes for variable display sizes.
     /// </summary>
-    internal class Coordinate
+    /// 
+    [Serializable]
+    public class Coordinate
     {
 
         /// <summary>
@@ -44,6 +46,8 @@ namespace JeuDeLaVie.Model
             Row = y;
             TileWidth = 15;
         }
+
+        public Coordinate() { }
 
         /// <summary>
         /// Set the tile width modifier.
