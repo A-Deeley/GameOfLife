@@ -109,12 +109,18 @@ namespace JeuDeLaVie.ViewModel
             CreateCanvas = new(exec =>
             {
                 Window game = new GameOfLife();
-                var tileSize = ((game.Width * 0.6) - 15) / _width;
+                var tileSize = game.Width * 0.6 / _width;
                 if (tileSize < 15)
                     tileSize = 15;
-                game.Height = tileSize * _height + 30;
+                game.Height = tileSize * _height;
                 game.Width = game.Height / 0.6;
-                var dt = new VM_Game(_width, _height, tileSize);
+                var dt = new VM_Game
+                {
+                    CanvasWidthPx = _width * tileSize,
+                    CanvasHeightPx = _height * tileSize,
+                    CanvasTileSizePx = tileSize
+                };
+                dt.Init();
                 game.DataContext = dt;
                 game.Show();
                 window.Close();

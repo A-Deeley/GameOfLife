@@ -25,15 +25,15 @@ namespace JeuDeLaVie.Model
         /// <summary>
         /// Dynamic position (row) of the coordinate based on size of the bound object (tile).
         /// </summary>
-        public int PosX { get => Col * TileWidth; }
+        public int PosX { get => Col * (int)TileWidth; }
         /// <summary>
         /// Dynamic position (column) of the coordinate based on the size of the bound object (tile).
         /// </summary>
-        public int PosY { get => Row * TileWidth; }
+        public int PosY { get => Row * (int)TileWidth; }
         /// <summary>
         /// Variable width of the bound object (tile). Default: 15. Minimum value: 15.
         /// </summary>
-        public int TileWidth { get; private set; }
+        public double TileWidth { get; private set; }
 
         /// <summary>
         /// Creates a Coordinate object that represents a location on a canvas control. Default tile width of 15px.
@@ -53,7 +53,7 @@ namespace JeuDeLaVie.Model
         /// Set the tile width modifier.
         /// </summary>
         /// <param name="width">New value for the tile width. Must be at least 15 (pixels).</param>
-        public void SetTileWidth(int width)
+        public void SetTileWidth(double width)
         {
             if (width >= 15)
                 TileWidth = width;

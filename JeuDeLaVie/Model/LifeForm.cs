@@ -87,7 +87,7 @@ namespace JeuDeLaVie.Model
         /// <param name="x">x position of the form.</param>
         /// <param name="y">y position of the form.</param>
         /// <param name="tileWidth">Tile width to set. Must be greater than 15.</param>
-        public LifeForm(int x, int y, int tileWidth)
+        public LifeForm(int x, int y, double tileWidth)
             :this(x, y)
         {
             Coord.SetTileWidth(tileWidth);

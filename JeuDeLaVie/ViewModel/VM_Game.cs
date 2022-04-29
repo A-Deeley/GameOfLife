@@ -37,12 +37,9 @@ namespace JeuDeLaVie.ViewModel
         private bool _isPlaying;
         private int _canvasWidthTiles;
         private int _canvasHeightTiles;
-        private int _canvasWidthPx;
-        private int _canvasHeightPx;
-        /// <summary>
-        /// Width of the a single tile in px squared.
-        /// </summary>
-        private double _canvasTileSize;
+        private double _canvasWidthPx;
+        private double _canvasHeightPx;
+        private double _canvasTileSizePx;
         /// <summary>
         /// Amount of iterations (generations) to run the program for.
         /// </summary>
@@ -60,6 +57,22 @@ namespace JeuDeLaVie.ViewModel
         private Visibility _stepVisible;
         private Visibility _startVisible;
         private Visibility _resumeVisible;
+
+        public double CanvasTileSizePx
+        {
+            get
+            {
+                return (_canvasTileSizePx < 15)
+                    ? 15
+                    : _canvasTileSizePx;
+            }
+            set
+            {
+                _canvasTileSizePx = (value < 15)
+                    ? 15
+                    : value;
+            }
+        }
 
         public bool? IsInfiniteChecked
         {
@@ -125,13 +138,13 @@ namespace JeuDeLaVie.ViewModel
             get => _formes;
             set { if (value is not null) { _formes = value; OnPropertyChanged(); } }
         }
-        public int CanvasWidthPx
+        public double CanvasWidthPx
         {
             get => _canvasWidthPx;
             set { _canvasWidthPx = value; OnPropertyChanged(); }
         }
 
-        public int CanvasHeightPx
+        public double CanvasHeightPx
         {
             get => _canvasHeightPx;
             set { _canvasHeightPx = value; OnPropertyChanged(); }
@@ -207,34 +220,12 @@ namespace JeuDeLaVie.ViewModel
         private void PauseExecute(object s) => IsPlaying = false;
         private void StepExecute(object s) => IsStepSet = true;
         private void ResumeExecute(object s) => IsPlaying = true;
-        private void DrawGliderShapeExecute(object s) => SetShape(GetCenterOffset((3, 3)), new int[,] { { 0, 1, 0 }, { 0, 0, 1 }, { 1, 1, 1 } });
-        private void DrawBlinkerShapeExecute(object s) => SetShape(GetCenterOffset((3, 3)), new int[,] { { 0, 0, 0 }, { 1, 1, 1 }, { 0, 0, 0 } });
-        private void DrawGunExecute(object s) => SetShape(GetCenterOffset((21, 33)), new int[,] {
-                {1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-        });
+        private void DrawGliderShapeExecute(object s) => SetShape(GetCenterOffset((3, 3)), GetShapeFromApplicationFile(Resources.GliderFile));
+        private void DrawBlinkerShapeExecute(object s) => SetShape(GetCenterOffset((3, 3)), GetShapeFromApplicationFile(Resources.BlinkerFile));
+        private void DrawGunExecute(object s) => SetShape(GetCenterOffset((33, 21)), GetShapeFromApplicationFile(Resources.GunFile));
         private void DrawRandomShapeExecute(object s)
         {
-            Formes = GenerateFilledGridRandom(_canvasWidthTiles, _canvasHeightTiles, (int)_canvasTileSize);
+            Formes = GenerateFilledGridRandom(_canvasWidthTiles, _canvasHeightTiles, CanvasTileSizePx);
             _logicalState = ConvertListTo2DimensionalArray(Formes, _canvasWidthTiles, _canvasHeightTiles);
         }
         private async void LoadShapeFromFileExecute(object s)
@@ -328,16 +319,16 @@ namespace JeuDeLaVie.ViewModel
         #endregion
         private void SetShape((int colOffset, int rowOffset) target, int[,] shape)
         {
-            if (shape.GetLength(1) > _canvasWidthTiles || shape.GetLength(0) > _canvasHeightTiles)
+            if (shape.GetLength(0) > _canvasWidthTiles || shape.GetLength(1) > _canvasHeightTiles)
                 throw new ArgumentException(
-                $"Shape is bigger than current canvas size (shape: {shape.GetLength(1)} x {shape.GetLength(0)} vs. canvas: {_canvasWidthTiles} x {_canvasHeightTiles}).");
+                $"Shape is bigger than current canvas size (shape: {shape.GetLength(0)} x {shape.GetLength(1)} vs. canvas: {_canvasWidthTiles} x {_canvasHeightTiles}).");
 
             bool[,] array = new bool[_canvasWidthTiles, _canvasHeightTiles];
             target.rowOffset = (array.GetLength(1) - (shape.GetLength(1) + target.rowOffset) < 0)
                 ? 0
                 : target.rowOffset;
             target.colOffset = (array.GetLength(0) - (shape.GetLength(0) + target.colOffset) < 0)
-                ?  0
+                ? 0
                 : target.colOffset;
 
             for (int row = 0; row < shape.GetLength(1); row++)
@@ -349,13 +340,11 @@ namespace JeuDeLaVie.ViewModel
         }
         #endregion
 
-        public VM_Game(int canvasWidth, int canvasHeight, double tileSize)
+        public void Init()
         {
-            _canvasTileSize = tileSize;
-            _canvasWidthTiles = canvasWidth;
-            _canvasHeightTiles = canvasHeight;
-            CanvasWidthPx = canvasWidth * (int)_canvasTileSize;
-            CanvasHeightPx = canvasHeight * (int)_canvasTileSize;
+            Task.Run(InspectSaveDirectory);
+            _canvasWidthTiles = (int)(CanvasWidthPx / CanvasTileSizePx);
+            _canvasHeightTiles = (int)(CanvasHeightPx / CanvasTileSizePx);
             _logicalState = new bool[_canvasWidthTiles, _canvasHeightTiles];
 
             PropertyChanged += OnGameStatePropertyChangedUpdateVisibility;
@@ -365,11 +354,7 @@ namespace JeuDeLaVie.ViewModel
             IsInfiniteChecked = false;
             IsStepSet = false;
 
-            // Generate initial view state. Resize tiles if window size permits it.
-            if ((int)_canvasTileSize < 15)
-                _canvasTileSize = 15;
-            Formes = GenerateFilledGrid(_canvasWidthTiles, _canvasHeightTiles, (int)_canvasTileSize);
-            OnPropertyChanged(nameof(Formes));
+            Formes = GenerateFilledGrid(_canvasWidthTiles, _canvasHeightTiles, CanvasTileSizePx);
 
             StartGame = new((s) => _ = Run());
             Pause = new(PauseExecute, CanPauseExecute);
@@ -383,6 +368,96 @@ namespace JeuDeLaVie.ViewModel
             SaveShapeToFile = new(SaveShapeToFileExecute, CanSaveShapeToFileExecute);
         }
 
+        private void InspectSaveDirectory()
+        {
+            string saveDirectoryRoot = Path.Combine(Environment.CurrentDirectory, Resources.SaveDirectory);
+
+            // Check if save directory exists.
+            if (!Directory.Exists(saveDirectoryRoot))
+                Directory.CreateDirectory(saveDirectoryRoot);
+
+            // Check if app saves exist and re-create them if not.
+            if (!Directory.Exists(Path.Combine(saveDirectoryRoot, Resources.AppSaves)))
+            {
+                Directory.CreateDirectory(Path.Combine(saveDirectoryRoot, Resources.AppSaves));
+                Task.Run(RestoreAppSaveFiles);
+            }
+
+            // Check if user save directory exists.
+            if (!Directory.Exists(Path.Combine(saveDirectoryRoot, Resources.UserSaves)))
+                Directory.CreateDirectory(Path.Combine(saveDirectoryRoot, Resources.UserSaves));
+        }
+
+        private void RestoreAppSaveFiles()
+        {
+            string appSaveDirectory = Path.Combine(Environment.CurrentDirectory, Resources.SaveDirectory, Resources.AppSaves);
+            Dictionary<string, string> files = new()
+            {
+                { Path.Combine(appSaveDirectory, Resources.GliderFile), Resources.GliderShape },
+                { Path.Combine(appSaveDirectory, Resources.BlinkerFile), Resources.BlinkerShape },
+                { Path.Combine(appSaveDirectory, Resources.GunFile), Resources.GunShape }
+            };
+
+            foreach (KeyValuePair<string, string> filePathAndShape in files)
+            {
+
+                using (StreamWriter sw = new(filePathAndShape.Key, false))
+                {
+                    sw.WriteLine(filePathAndShape.Value);
+                }
+            }
+        }
+
+        private int[,] GetShapeFromApplicationFile(string shapeFileName)
+        {
+            // "Cette methode est degeulasse." -Andrew Deeley
+
+            if (Path.GetExtension(shapeFileName) != ".gol")
+                shapeFileName += ".gol";
+
+            shapeFileName = Path.Combine(Environment.CurrentDirectory, Resources.SaveDirectory, Resources.AppSaves, shapeFileName);
+            if (!File.Exists(shapeFileName))
+                RestoreAppSaveFiles();
+
+            try
+            {
+                string shapeString = "";
+                using (StreamReader reader = new(shapeFileName))
+                {
+                    shapeString = reader.ReadToEnd();
+                }
+
+                if (string.IsNullOrEmpty(shapeString)) return new int[0, 0];
+                string[] shapeStringParams = shapeString.Split(';');
+                if (shapeStringParams.Length < 3) return new int[0, 0];
+                if (!int.TryParse(shapeStringParams[0], out int width)) return new int[0, 0];
+                if (!int.TryParse(shapeStringParams[1], out int height)) return new int[0, 0];
+
+                string[] shapeRows = shapeStringParams[2..];
+                if (shapeRows.Length != height) return new int[0, 0];
+
+                List<int> shapeColRowValues = new(width * height);
+
+                foreach (string row in shapeRows)
+                {
+                    string[] values = row.Split(',');
+                    foreach (string value in values)
+                    {
+                        shapeColRowValues.Add(int.Parse(value));
+                    }
+                }
+
+                int[,] returnShapeColRowValues = new int[width, height];
+
+                for (int y = 0; y < height; y++)
+                    for (int x = 0; x < width; x++)
+                        returnShapeColRowValues[x, y] = shapeColRowValues[(width * y) + x];
+
+                return returnShapeColRowValues;
+            }
+            catch (Exception) { return new int[0, 0]; }
+        }
+
         private (int, int) GetCenterOffset((int width, int height) boundingBox)
         {
             int centerCol = (int)(0.5 * _canvasWidthTiles);
@@ -394,21 +469,21 @@ namespace JeuDeLaVie.ViewModel
             return (centerCol, centerRow);            
         }
 
-        private static List<LifeForm> GenerateFilledGrid(int width, int height, int tileSize)
+        private static List<LifeForm> GenerateFilledGrid(int width, int height, double tileSize)
         {
             List<LifeForm> forms = new(width * height);
             for (int row = 0; row < height; row++)
             {
                 for (int col = 0; col < width; col++)
                 {
-                    forms.Add(new(col, row, (int)tileSize));
+                    forms.Add(new(col, row, tileSize));
                 }
             }
 
             return forms;
         }
 
-        private static List<LifeForm> GenerateFilledGridRandom(int width, int height, int tileSize)
+        private static List<LifeForm> GenerateFilledGridRandom(int width, int height, double tileSize)
         {
             List<LifeForm> filledForms = GenerateFilledGrid(width, height, tileSize);
             Random r = new(Environment.TickCount);
@@ -519,8 +594,8 @@ namespace JeuDeLaVie.ViewModel
             {
                 for (int col = 0; col < array.GetLength(0); col++)
                 {
-                    LifeForm form = new(col, row, (int)_canvasTileSize);
-                    form.IsAlive = array[row, col];
+                    LifeForm form = new(col, row, (int)CanvasTileSizePx);
+                    form.IsAlive = array[col, row];
                     list.Add(form);
                 }
             }
