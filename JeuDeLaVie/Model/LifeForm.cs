@@ -24,9 +24,7 @@ namespace JeuDeLaVie.Model
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName]string caller = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(caller));
         #endregion
-        [JsonIgnore]
         private bool _isAlive;
-        [JsonIgnore]
         private Brush _lifeFormColour;
         #region Bindings
         /// <summary>
