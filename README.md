@@ -8,14 +8,17 @@ Reproduction du jeu de la vie de Conway
 Télécharger l'installateur ici: [Latest Release](https://github.com/kwidz/AndrewSoloProject/releases/tag/v1.0-release)
 
 1) Lancez l'installateur.
-2) Cliquez sur `Installer`.
+2) Cliquez sur `Installer`.  
+
 ![install](assets/images/installation/1.PNG)
-3) Une fois l'installation terminée, cliquez sur `Terminer`
+3) Une fois l'installation terminée, cliquez sur `Terminer`  
+
 ![done](assets/images/installation/2.PNG)
 
 
 ## Usage
-Lancement:
+Lancement:  
+
 ![launch](assets/images/utilisation/1.PNG)
 
 Vous pouvez définir une taille custom pour la grille. Voici un exemple d'une grille 15x15:
@@ -37,16 +40,20 @@ la grille une forme pré-définie, ainsi qu'une 'forme' aléatoire. Chaque forme
 minimum, sinon quoi le bouton sera grisé puisqu'elle ne rentre pas dans la grille.
 
 ##### Forme 1 (Glider)
-**Taille**: 3x3
+**Taille**: 3x3  
+
 **Forme**: ![glider](assets/images/utilisation/7.PNG)
 ##### Forme 2 (Blinker)
-**Taille**: 3x3
+**Taille**: 3x3  
+
 **Forme**: ![blinker](assets/images/utilisation/8.PNG)
 ##### Forme 3 (Gun)
-**Taille**: 33x21
+**Taille**: 33x21  
+
 **Forme**: ![gun](assets/images/utilisation/9.PNG)
 ##### Aléatoire
-**Taille**: Aucune
+**Taille**: Aucune  
+
 **Forme**: Créee un canvas aléatoire. Voici un exemple:
 ![aleatoire](assets/images/utilisation/10.PNG)
 
@@ -59,9 +66,11 @@ Donnez un nom a votre fichier pour l'enregistrer!
 Vous pouvez entrer le nombre d'itérations souhaité ou cocher la case `Infini?`.
 Le bouton `Démarrer` permet de commencer la simulation, et fait aussi apparaitre
 les boutons `Continuer` et `Pause`. 
-![pause](assets/images/utilisation/11.PNG)
+![pause](assets/images/utilisation/11.PNG)  
+
 Quand on fait `Pause`, le bouton `Itérer` apparait.
-![iterate](assets/images/utilisation/12.PNG)
+![iterate](assets/images/utilisation/12.PNG)  
+
 En dessous vous voyez le numéro de la dernière itération.
 #### Contrôle de vitesse
 Vous pouvez ralentir (1s par itération) ou accélérer (0.05s par itération) la simulation.
