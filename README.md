@@ -10,7 +10,8 @@ Télécharger l'installateur ici: [Latest Release](https://github.com/kwidz/Andr
 1) Lancez l'installateur.
 2) Cliquez sur `Installer`.  
 
-![install](assets/images/installation/1.PNG)
+![install](assets/images/installation/1.PNG)  
+
 3) Une fois l'installation terminée, cliquez sur `Terminer`  
 
 ![done](assets/images/installation/2.PNG)
@@ -42,15 +43,21 @@ minimum, sinon quoi le bouton sera grisé puisqu'elle ne rentre pas dans la gril
 ##### Forme 1 (Glider)
 **Taille**: 3x3  
 
-**Forme**: ![glider](assets/images/utilisation/7.PNG)
+**Forme**:  
+![glider](assets/images/utilisation/7.PNG)  
+
 ##### Forme 2 (Blinker)
 **Taille**: 3x3  
 
-**Forme**: ![blinker](assets/images/utilisation/8.PNG)
+**Forme**:  
+![blinker](assets/images/utilisation/8.PNG)  
+
 ##### Forme 3 (Gun)
 **Taille**: 33x21  
 
-**Forme**: ![gun](assets/images/utilisation/9.PNG)
+**Forme**:  
+![gun](assets/images/utilisation/9.PNG)  
+
 ##### Aléatoire
 **Taille**: Aucune  
 
@@ -68,7 +75,8 @@ Le bouton `Démarrer` permet de commencer la simulation, et fait aussi apparaitr
 les boutons `Continuer` et `Pause`. 
 ![pause](assets/images/utilisation/11.PNG)  
 
-Quand on fait `Pause`, le bouton `Itérer` apparait.
+Quand on fait `Pause`, le bouton `Itérer` apparait.  
+
 ![iterate](assets/images/utilisation/12.PNG)  
 
 En dessous vous voyez le numéro de la dernière itération.
