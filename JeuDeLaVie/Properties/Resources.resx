@@ -159,7 +159,7 @@
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0</value>
   </data>
   <data name="SaveDirectory" xml:space="preserve">
-    <value>saves</value>
+    <value>GameOfLife\Saves</value>
   </data>
   <data name="UserSaves" xml:space="preserve">
     <value>user</value>
