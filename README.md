@@ -5,7 +5,7 @@
 Reproduction du jeu de la vie de Conway
 
 ## Installation
-Télécharger l'installateur ici: [Latest Release](https://github.com/kwidz/AndrewSoloProject/releases/tag/v1.0-release)
+Télécharger l'installateur ici: [Latest Release](https://github.com/A-Deeley/GameOfLife/releases)
 
 1) Lancez l'installateur.
 2) Cliquez sur `Installer`.  
