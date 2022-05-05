@@ -233,7 +233,7 @@ namespace JeuDeLaVie.ViewModel
             OpenFileDialog loadFileDialog = new();
             loadFileDialog.Filter = "Game of life files (*.gol)|*.gol";
             loadFileDialog.InitialDirectory = Path.Combine(
-                Environment.CurrentDirectory, 
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), 
                 Resources.SaveDirectory,
                 Resources.UserSaves);
 
@@ -257,7 +257,7 @@ namespace JeuDeLaVie.ViewModel
             SaveFileDialog saveFileDialog = new();
             saveFileDialog.Filter = "Game of life files (*.gol)|*.gol";
             saveFileDialog.InitialDirectory = Path.Combine(
-                Environment.CurrentDirectory,
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 Resources.SaveDirectory,
                 Resources.UserSaves);
 
@@ -370,7 +370,7 @@ namespace JeuDeLaVie.ViewModel
 
         private void InspectSaveDirectory()
         {
-            string saveDirectoryRoot = Path.Combine(Environment.CurrentDirectory, Resources.SaveDirectory);
+            string saveDirectoryRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Resources.SaveDirectory);
 
             // Check if save directory exists.
             if (!Directory.Exists(saveDirectoryRoot))
@@ -390,7 +390,7 @@ namespace JeuDeLaVie.ViewModel
 
         private void RestoreAppSaveFiles()
         {
-            string appSaveDirectory = Path.Combine(Environment.CurrentDirectory, Resources.SaveDirectory, Resources.AppSaves);
+            string appSaveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Resources.SaveDirectory, Resources.AppSaves);
             Dictionary<string, string> files = new()
             {
                 { Path.Combine(appSaveDirectory, Resources.GliderFile), Resources.GliderShape },
