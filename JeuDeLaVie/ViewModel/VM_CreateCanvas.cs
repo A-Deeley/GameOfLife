@@ -15,8 +15,8 @@ namespace JeuDeLaVie.ViewModel
     /// </summary>
     internal class VM_CreateCanvas : VM_Base
     {
-        private int _width;
-        private int _height;
+        private int? _width;
+        private int? _height;
         private string _errWidth;
         private string _errHeight;
         private Brush _borderBrushWidth;
@@ -30,16 +30,16 @@ namespace JeuDeLaVie.ViewModel
             get => _width.ToString();
             set
             {
-                if (int.TryParse(value, out int valueInt))
+                if (int.TryParse(value, out int valueInt) && valueInt > 0)
                 {
                     ErrWidth = string.Empty;
-                    BorderBrushWidth = Brushes.Black;
+                    BorderBrushWidth = Brushes.Green;
                     _width = valueInt;
                     OnPropertyChanged();
                 }
                 else
                 {
-                    ErrWidth = "Pas un entier.";
+                    _width = null;
                     BorderBrushWidth = Brushes.Red;
                 }
             }
@@ -52,16 +52,16 @@ namespace JeuDeLaVie.ViewModel
             get => _height.ToString();
             set
             {
-                if (int.TryParse(value, out int valueInt))
+                if (int.TryParse(value, out int valueInt) && valueInt > 0)
                 {
                     ErrHeight = string.Empty;
-                    BorderBrushHeight = Brushes.Black;
+                    BorderBrushHeight = Brushes.Green;
                     _height = valueInt;
                     OnPropertyChanged();
                 }
                 else
                 {
-                    ErrHeight = "Pas un entier.";
+                    _height = null;
                     BorderBrushHeight = Brushes.Red;
                 }
             }
@@ -109,21 +109,25 @@ namespace JeuDeLaVie.ViewModel
             CreateCanvas = new(exec =>
             {
                 Window game = new GameOfLife();
-                var tileSize = game.Width * 0.6 / _width;
+                double tileSize = game.Width * 0.6 / (int)_width;
                 if (tileSize < 15)
                     tileSize = 15;
-                game.Height = tileSize * _height;
+                game.Height = tileSize * (int)_height;
                 game.Width = game.Height / 0.6;
                 var dt = new VM_Game
                 {
-                    CanvasWidthPx = _width * tileSize,
-                    CanvasHeightPx = _height * tileSize,
+                    CanvasWidthPx = (int)_width * tileSize,
+                    CanvasHeightPx = (int)_height * tileSize,
                     CanvasTileSizePx = tileSize
                 };
                 dt.Init();
                 game.DataContext = dt;
                 game.Show();
                 window.Close();
+            },
+            canExec => 
+            {
+                return !string.IsNullOrEmpty(Width) && !string.IsNullOrEmpty(Height) && _width > 0 && _height > 0;
             });
             BorderBrushHeight = Brushes.Black;
             BorderBrushWidth = Brushes.Black;

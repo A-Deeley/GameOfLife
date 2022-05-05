@@ -10,34 +10,33 @@
         Title="CanvasPicker" Height="200" Width="400">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20*"/>
-            <ColumnDefinition Width="80*"/>
+            <ColumnDefinition Width="30*"/>
+            <ColumnDefinition Width="70*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Label VerticalAlignment="Center" HorizontalAlignment="Right">Canvas size:</Label>
+        <Label VerticalAlignment="Center" HorizontalAlignment="Right">Taille de la grille:</Label>
         <Grid Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <StackPanel VerticalAlignment="Center">
-                <!--Width-->
-                <TextBox BorderBrush="{Binding BorderBrushWidth}" Text="{Binding Width}" Height="30" Width="60" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                <Label Content="{Binding ErrWidth}" HorizontalAlignment="Right" Foreground="Red"/>
-            </StackPanel>
+            <!--Width-->
+            <Border BorderBrush="{Binding BorderBrushWidth}" BorderThickness="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <TextBox Text="{Binding Width, UpdateSourceTrigger=PropertyChanged}" Height="30" Width="60" GotFocus="TextBox_GotFocus"/>
+
+            </Border>
             <Label Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">x</Label>
-            <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                <!--Height-->
-                <TextBox BorderBrush="{Binding BorderBrushHeight}" Text="{Binding Height}" Height="30" Width="60" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Label Content="{Binding ErrHeight}" HorizontalAlignment="Left" Foreground="Red"/>
-            </StackPanel>
+            <!--Height-->
+            <Border Grid.Column="2" BorderBrush="{Binding BorderBrushHeight}" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBox Text="{Binding Height, UpdateSourceTrigger=PropertyChanged}" Height="30" Width="60" GotFocus="TextBox_GotFocus"/>
+            </Border>
         </Grid>
-        <Button Grid.Row="1" Grid.ColumnSpan="2" Margin="5" Height="35" Width="100" Command="{Binding CreateCanvas}">
-            Create Canvas
+        <Button Grid.Row="1" Grid.Column="1" Margin="5" Height="35" Width="100" Command="{Binding CreateCanvas}">
+            Creer la grille
         </Button>
     </Grid>
 </Window>
