@@ -26,5 +26,12 @@ namespace JeuDeLaVie.View
             DataContext = new VM_CreateCanvas(this);
             Closed += (s, e) => DataContext = null;
         }
+
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            var textbox = e.OriginalSource as TextBox;
+            if (textbox is not null)
+                textbox.SelectAll();
+        }
     }
 }
